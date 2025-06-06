@@ -22,7 +22,7 @@ webgame/
 ├── index.html                 # File HTML chính
 ├── assets/                    # Tài nguyên media
 │   ├── vid.mp4               # Video nền chính
-│   ├── a.jpg, b.jpg, c.jpg   # Hình ảnh câu chuyện
+│   ├── aa.jpg, b.jpg, c.jpg   # Hình ảnh câu chuyện
 │   └── character-images.jpg   # Hình ảnh nhân vật
 ├── css/                       # Stylesheets
 │   ├── main.css              # CSS chính và variables
