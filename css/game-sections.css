@@ -1,0 +1,552 @@
+/* Game Sections Styles */
+
+/* Story Section */
+.story-section {
+    padding: var(--section-padding);
+    background: linear-gradient(135deg, var(--darker-color) 0%, var(--dark-color) 50%, var(--darker-color) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.story-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" patternUnits="userSpaceOnUse" width="100" height="100"><circle cx="50" cy="50" r="1" fill="%23d4af37" opacity="0.03"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    pointer-events: none;
+}
+
+.story-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6rem;
+}
+
+.story-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 1s ease;
+}
+
+.story-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.story-card.reverse {
+    direction: rtl;
+}
+
+.story-card.reverse .story-text {
+    direction: ltr;
+}
+
+.story-image {
+    position: relative;
+    height: 500px;
+    overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    transition: all 0.6s ease;
+}
+
+.story-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    z-index: 2;
+    mix-blend-mode: overlay;
+}
+
+.story-image:hover::before {
+    opacity: 0.2;
+}
+
+.story-image:hover {
+    transform: scale(1.02) rotateY(2deg);
+    box-shadow: 0 30px 80px rgba(212, 175, 55, 0.3);
+}
+
+.parallax-img {
+    width: 100%;
+    height: 140%; /* Giảm xuống để tối ưu performance */
+    object-fit: cover;
+    object-position: center top; /* Luôn bắt đầu từ đầu ảnh */
+    will-change: transform; /* GPU optimization */
+    transform: translate3d(0, 0, 0); /* Force GPU layer, bắt đầu từ 0% */
+    transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1); /* Smoother easing */
+    filter: brightness(0.9) contrast(1.1);
+    contain: layout style paint; /* CSS containment cho performance */
+}
+
+/* Scroll Animation States - Bắt đầu từ đầu ảnh */
+.story-image.scroll-start .parallax-img {
+    transform: translate3d(0, -5%, 0); /* Nhẹ nhàng từ đầu ảnh */
+}
+
+.story-image.scroll-progress .parallax-img {
+    transform: translate3d(0, -20%, 0); /* Trung bình */
+    filter: brightness(1) contrast(1.2);
+}
+
+.story-image.scroll-complete .parallax-img {
+    transform: translate3d(0, -35%, 0); /* Giảm xuống để tránh quá mức */
+    filter: brightness(1.05) contrast(1.25);
+}
+
+.story-image:hover .parallax-img {
+    transform: translate3d(0, -15%, 0) scale(1.02); /* Hover nhẹ nhàng hơn */
+    filter: brightness(1.1) contrast(1.3) saturate(1.05);
+    transition: transform 0.4s ease-out; /* Nhanh hơn cho hover */
+}
+
+.story-text {
+    padding: 2rem;
+}
+
+.story-text h3 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    position: relative;
+}
+
+.story-text h3::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    border-radius: 2px;
+}
+
+.story-text p {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: var(--text-muted);
+}
+
+/* Characters Section */
+.characters-section {
+    padding: var(--section-padding);
+    background: var(--dark-color);
+    position: relative;
+}
+
+.characters-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(255, 107, 53, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.characters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 3rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.character-card {
+    position: relative;
+    border-radius: 25px;
+    overflow: hidden;
+    background: linear-gradient(145deg, rgba(212, 175, 55, 0.1), rgba(255, 107, 53, 0.05));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(50px) scale(0.9);
+}
+
+.character-card.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.character-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 30px 80px rgba(212, 175, 55, 0.2);
+    border-color: var(--primary-color);
+}
+
+.character-image {
+    position: relative;
+    height: 400px;
+    overflow: hidden;
+}
+
+.character-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.8s ease;
+    filter: sepia(20%) saturate(1.2) contrast(1.1);
+}
+
+.character-card:hover .character-image img {
+    transform: scale(1.1);
+    filter: sepia(0%) saturate(1.4) contrast(1.2);
+}
+
+.character-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+    padding: 2rem;
+    transform: translateY(100px);
+    transition: all 0.6s ease;
+}
+
+.character-card:hover .character-overlay {
+    transform: translateY(0);
+}
+
+.character-overlay h4 {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.character-overlay p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Gameplay Section */
+.gameplay-section {
+    padding: var(--section-padding);
+    background: linear-gradient(135deg, var(--dark-color) 0%, var(--darker-color) 100%);
+    position: relative;
+}
+
+.gameplay-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2.5rem;
+    margin-top: 4rem;
+}
+
+.feature-card {
+    background: linear-gradient(145deg, rgba(212, 175, 55, 0.05), rgba(255, 107, 53, 0.03));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    border-radius: 20px;
+    padding: 2.5rem;
+    text-align: center;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.feature-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+    transition: left 0.8s ease;
+}
+
+.feature-card:hover::before {
+    left: 100%;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--primary-color);
+    box-shadow: 0 20px 60px rgba(212, 175, 55, 0.2);
+}
+
+.feature-icon {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    display: block;
+    filter: sepia(100%) saturate(200%) hue-rotate(35deg);
+    transition: all 0.6s ease;
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.2) rotateY(360deg);
+    filter: sepia(100%) saturate(200%) hue-rotate(0deg);
+}
+
+.feature-card h4 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.feature-card p {
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin: 0;
+}
+
+/* Download Section */
+.download-section {
+    padding: var(--section-padding);
+    background: linear-gradient(135deg, var(--darker-color) 0%, var(--dark-color) 50%, var(--darker-color) 100%);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.download-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, transparent, rgba(212, 175, 55, 0.1), transparent, rgba(255, 107, 53, 0.1), transparent);
+    animation: rotate 20s linear infinite;
+    pointer-events: none;
+}
+
+.download-content {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.download-content h2 {
+    color: var(--primary-color);
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    margin-bottom: 1.5rem;
+    text-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+}
+
+.download-content p {
+    font-size: 1.25rem;
+    margin-bottom: 3rem;
+    color: var(--text-muted);
+}
+
+.download-buttons {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Footer */
+.footer {
+    background: var(--darker-color);
+    padding: 3rem 0 1rem;
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.footer-section h4 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.footer-section p,
+.footer-section li {
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.footer-section ul {
+    list-style: none;
+}
+
+.footer-section li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-section a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.footer-section a:hover {
+    color: var(--primary-color);
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.footer-bottom p {
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* Animations */
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Design với Vietnamese Font Optimization */
+@media (max-width: 768px) {
+    .story-card {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        text-align: center;
+    }
+    
+    .story-card.reverse {
+        direction: ltr;
+    }
+    
+    .story-image {
+        height: 350px;
+        margin: 0 auto;
+        max-width: 400px;
+    }
+    
+    .parallax-img {
+        height: 120%; /* Giảm height trên mobile cho performance */
+        transform: translateY(-5%);
+    }
+    
+    .story-image.scroll-progress .parallax-img {
+        transform: translateY(-15%);
+    }
+    
+    .story-image.scroll-complete .parallax-img {
+        transform: translateY(-25%);
+    }
+    
+    .story-text {
+        padding: 1.5rem;
+    }
+    
+    .story-text h3 {
+        font-size: 1.8rem;
+        line-height: 1.3;
+    }
+    
+    .story-text p {
+        font-size: 1rem;
+        line-height: 1.7;
+        text-align: left;
+    }
+    
+    .characters-grid {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+    }
+    
+    .gameplay-features {
+        grid-template-columns: 1fr;
+    }
+    
+    .download-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .story-text {
+        padding: 1rem;
+    }
+    
+    .story-text h3 {
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+    }
+    
+    .story-text p {
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+    
+    .story-image {
+        height: 280px;
+        border-radius: 15px;
+    }
+    
+    .feature-card {
+        padding: 2rem 1.5rem;
+    }
+    
+    .character-card {
+        margin: 0 1rem;
+    }
+    
+    .character-image {
+        height: 300px;
+    }
+}
+
+/* Enhanced typography cho Vietnamese text */
+@media (prefers-reduced-motion: no-preference) {
+    .story-text h3 {
+        animation: fadeInUp 0.8s ease-out 0.3s both;
+    }
+    
+    .story-text p {
+        animation: fadeInUp 0.8s ease-out 0.5s both;
+    }
+}
+
+/* High contrast support */
+@media (prefers-contrast: high) {
+    .story-image::before {
+        opacity: 0.1 !important;
+    }
+    
+    .parallax-img {
+        filter: contrast(1.4) brightness(1.1) !important;
+    }
+}

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Việt Sử Trường Ca: Tiếng Vọng Ngàn Năm</title>      <!-- CSS Files -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/header-enhanced.css">
+    <link rel="stylesheet" href="css/navigation-enhanced.css">
+    <link rel="stylesheet" href="css/hero-section.css">    <link rel="stylesheet" href="css/game-sections.css">
+    <link rel="stylesheet" href="css/animations.css">
+    
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+      <!-- Vietnamese Historical Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Vietnamese Traditional Typography -->
+    <style>
+        @font-face {
+            font-family: 'VNI-Times';
+            src: url('https://fonts.cdnfonts.com/css/vni-times') format('woff2');
+            font-display: swap;
+        }
+        
+        @font-face {
+            font-family: 'Be Vietnam Pro';
+            src: url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+            font-display: swap;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <div class="nav-content">            <div class="logo">
+                <h2>
+                    <span class="logo-main">Việt Sử Trường Ca</span>
+                    <span class="logo-subtitle">Tiếng Vọng Ngàn Năm</span>
+                </h2>
+            </div>            <div class="nav-menu">
+                <a href="#home" class="nav-link"><span>Trang Chủ</span></a>
+                <a href="#story" class="nav-link"><span>Câu Chuyện</span></a>
+                <a href="#characters" class="nav-link"><span>Nhân Vật</span></a>
+                <a href="#gameplay" class="nav-link"><span>Lối Chơi</span></a>
+                <a href="#download" class="nav-link"><span>Tải Game</span></a>
+            </div>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Video Background -->
+    <section id="home" class="hero-section">
+        <div class="video-container">
+            <video id="hero-video" muted loop>
+                <source src="assets/vid.mp4" type="video/mp4">
+            </video>
+            <div class="video-overlay"></div>
+        </div>
+        
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    <span class="title-line">Việt Sử Trường Ca</span>
+                    <span class="subtitle">Tiếng Vọng Ngàn Năm</span>
+                </h1>
+                <p class="hero-description">
+                    Khám phá hành trình huyền thoại qua thời kỳ Văn Lang - Âu Lạc. 
+                    Hóa thân thành anh hùng trong thế giới pixel art đầy màu sắc và cảm xúc.
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" id="play-btn">Chơi Ngay</button>
+                    <button class="btn btn-secondary" id="trailer-btn">Xem Trailer</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 3D Scene Container -->
+        <div id="three-container"></div>
+        
+        <!-- Particle System -->
+        <div class="particles" id="particles"></div>
+        
+        <!-- Scroll Indicator -->
+        <div class="scroll-indicator">
+            <div class="scroll-mouse">
+                <div class="scroll-wheel"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Story Section -->
+    <section id="story" class="story-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Câu Chuyện Huyền Thoại</h2>
+                <p class="section-subtitle">Khám phá những trang sử hào hùng của dân tộc</p>
+            </div>
+            
+            <div class="story-content">
+                <div class="story-card">
+                    <div class="story-image">
+                        <img src="assets/a.jpg" alt="Văn Lang" class="parallax-img">
+                    </div>
+                    <div class="story-text">
+                        <h3>Thời Kỳ Văn Lang</h3>
+                        <p>Bước vào thế giới của các vua Hùng, nơi huyền thoại và lịch sử hòa quyện. 
+                        Khám phá những câu chuyện về nguồn gốc dân tộc, về tinh thần đoàn kết và lòng yêu nước.</p>
+                    </div>
+                </div>
+                
+                <div class="story-card reverse">
+                    <div class="story-image">
+                        <img src="assets/b.jpg" alt="Âu Lạc" class="parallax-img">
+                    </div>
+                    <div class="story-text">
+                        <h3>Âu Lạc Hùng Mạnh</h3>
+                        <p>Theo chân An Dương Vương trong cuộc chiến bảo vệ đất nước. 
+                        Trải nghiệm những trận chiến hùng tráng và những quyết định định mệnh.</p>
+                    </div>
+                </div>
+                
+                <div class="story-card">
+                    <div class="story-image">
+                        <img src="assets/c.jpg" alt="Văn hóa" class="parallax-img">
+                    </div>
+                    <div class="story-text">
+                        <h3>Văn Hóa Rực Rỡ</h3>
+                        <p>Khám phá nền văn minh cổ đại với những phong tục tập quán, 
+                        tín ngưỡng và nghệ thuật đặc sắc của tổ tiên ta.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Characters Section -->
+    <section id="characters" class="characters-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Nhân Vật Huyền Thoại</h2>
+                <p class="section-subtitle">Gặp gỡ những anh hùng và nhân vật lịch sử</p>
+            </div>
+            
+            <div class="characters-grid">
+                <div class="character-card" data-character="hero">
+                    <div class="character-image">
+                        <img src="assets/z6676162277496_800fd89c1b0ef8bca4fc223124887045.jpg" alt="Anh hùng chính">
+                        <div class="character-overlay">
+                            <h4>Anh Hùng Chính</h4>
+                            <p>Người mang sứ mệnh bảo vệ đất nước</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="character-card" data-character="king">
+                    <div class="character-image">
+                        <img src="assets/z6676468805480_d1a250bd14c76e4571f33439e0ffd32a.jpg" alt="Vua Hùng">
+                        <div class="character-overlay">
+                            <h4>Vua Hùng</h4>
+                            <p>Vị vua anh minh của Văn Lang</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gameplay Section -->
+    <section id="gameplay" class="gameplay-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Lối Chơi Độc Đáo</h2>
+                <p class="section-subtitle">Trải nghiệm RPG 2D pixel art với chiều sâu</p>
+            </div>
+            
+            <div class="gameplay-features">
+                <div class="feature-card">
+                    <div class="feature-icon">🎮</div>
+                    <h4>Nhập Vai Sâu</h4>
+                    <p>Hóa thân thành nhân vật lịch sử, đưa ra quyết định ảnh hưởng đến câu chuyện</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🗺️</div>
+                    <h4>Thế Giới Rộng Lớn</h4>
+                    <p>Khám phá các địa danh lịch sử được tái hiện chân thực qua pixel art</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">⚔️</div>
+                    <h4>Chiến Đấu Hấp Dẫn</h4>
+                    <p>Hệ thống combat động như Hollow Knight với các kỹ năng độc đáo</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h4>Giá Trị Giáo Dục</h4>
+                    <p>Học hỏi lịch sử và văn hóa một cách tự nhiên qua gameplay</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download" class="download-section">
+        <div class="container">
+            <div class="download-content">
+                <h2>Sẵn Sàng Khám Phá?</h2>
+                <p>Tải game ngay để bắt đầu cuộc hành trình qua lịch sử Việt Nam</p>
+                <div class="download-buttons">
+                    <button class="btn btn-primary btn-large">Tải Về PC</button>
+                    <button class="btn btn-secondary btn-large">Chơi Trên Web</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Việt Sử Trường Ca</h4>
+                    <p>Game nhập vai lịch sử 2D pixel art đầu tiên tại Việt Nam</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Liên Kết</h4>
+                    <ul>
+                        <li><a href="#about">Về Chúng Tôi</a></li>
+                        <li><a href="#news">Tin Tức</a></li>
+                        <li><a href="#support">Hỗ Trợ</a></li>
+                        <li><a href="#contact">Liên Hệ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Cộng Đồng</h4>
+                    <ul>
+                        <li><a href="#">Facebook</a></li>
+                        <li><a href="#">Discord</a></li>
+                        <li><a href="#">YouTube</a></li>
+                        <li><a href="#">Steam</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Việt Sử Trường Ca. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>    </footer>      <!-- JavaScript Files -->
+    <script src="js/video-controller.js"></script>
+    <script src="js/three-scene.js"></script>
+    <script src="js/particles.js"></script>
+    <script src="js/image-scroll.js"></script>
+    <script src="js/scroll-animations.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/navigation-enhancer.js"></script>
+    <script src="js/header-effects.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

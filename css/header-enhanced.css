@@ -1,0 +1,411 @@
+/* Enhanced Header Styles for Vietnamese Historical Game */
+
+/* Special Vietnamese Cultural Elements */
+.nav-container::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        transparent 0%,
+        rgba(212, 175, 55, 0.3) 20%,
+        rgba(255, 107, 53, 0.5) 50%,
+        rgba(212, 175, 55, 0.3) 80%,
+        transparent 100%);
+    animation: borderFlow 4s ease-in-out infinite;
+}
+
+/* Vietnamese Pattern Background */
+.nav-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 25% 25%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255, 107, 53, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Enhanced Logo with Vietnamese Characteristics */
+.logo {
+    position: relative;
+}
+
+.logo::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -50px;
+    width: 30px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+    transform: translateY(-50%);
+    opacity: 0.6;
+    animation: logoAccent 3s ease-in-out infinite alternate;
+}
+
+.logo::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -50px;
+    width: 30px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+    transform: translateY(-50%);
+    opacity: 0.6;
+    animation: logoAccent 3s ease-in-out infinite alternate-reverse;
+}
+
+/* Enhanced Typography */
+.logo h2 {
+    position: relative;
+    letter-spacing: 1px;
+    font-family: 'Playfair Display', serif;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1;
+}
+
+.logo-main {
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(45deg, 
+        var(--primary-color) 0%,
+        #f4d03f 50%,
+        var(--accent-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+    margin-bottom: 2px;
+}
+
+.logo-subtitle {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.8;
+    animation: subtitleGlow 3s ease-in-out infinite alternate;
+}
+
+.logo h2::before {
+    content: '⚔️';
+    position: absolute;
+    left: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    opacity: 0.8;
+    animation: logoSymbol 2s ease-in-out infinite alternate;
+    filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.5));
+}
+
+.logo h2::after {
+    content: '🏛️';
+    position: absolute;
+    right: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    opacity: 0.8;
+    animation: logoSymbol 2s ease-in-out infinite alternate-reverse;
+    filter: drop-shadow(0 0 8px rgba(255, 107, 53, 0.5));
+}
+
+/* Navigation Links Enhancement */
+.nav-link {
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(212, 175, 55, 0.1), 
+        transparent);
+    transition: left 0.6s ease;
+    z-index: -1;
+}
+
+.nav-link:hover::before {
+    left: 100%;
+}
+
+/* Vietnamese Cultural Patterns */
+.nav-link:hover {
+    position: relative;
+}
+
+.nav-link:hover::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 4px solid var(--primary-color);
+    transform: translateX(-50%);
+    animation: arrowPulse 0.6s ease-out;
+}
+
+/* Mobile Menu Enhancements */
+@media (max-width: 768px) {
+    .nav-menu.active {
+        background: linear-gradient(135deg, 
+            rgba(15, 15, 15, 0.98) 0%,
+            rgba(26, 26, 26, 0.96) 30%,
+            rgba(42, 24, 16, 0.94) 60%,
+            rgba(15, 15, 15, 0.98) 100%);
+    }
+
+    .nav-menu.active::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+            linear-gradient(45deg, transparent 25%, rgba(212, 175, 55, 0.02) 25%),
+            linear-gradient(-45deg, transparent 25%, rgba(255, 107, 53, 0.02) 25%);
+        background-size: 30px 30px;
+        pointer-events: none;
+        animation: mobilePattern 10s linear infinite;
+    }
+
+    .nav-link {
+        position: relative;
+        border-left: 3px solid transparent;
+        transition: all var(--transition-smooth);
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+        border-left-color: var(--primary-color);
+        background: linear-gradient(90deg, 
+            rgba(212, 175, 55, 0.1) 0%,
+            transparent 100%);
+        transform: translateX(10px);
+    }
+
+    .logo h2::before,
+    .logo h2::after {
+        display: none;
+    }
+
+    .logo-main {
+        font-size: 1.4rem;
+    }
+
+    .logo-subtitle {
+        font-size: 0.6rem;
+        letter-spacing: 1px;
+    }
+}
+
+/* Loading and Transition Effects */
+.nav-container.loading {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.nav-container.loaded {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Scroll Effects */
+.nav-container.scrolled {
+    backdrop-filter: blur(25px) saturate(1.8);
+}
+
+.nav-container.scrolled::before {
+    opacity: 0.9;
+    transform: scaleX(1.5);
+}
+
+.nav-container.scrolled .logo h2 {
+    transform: scale(0.9);
+}
+
+/* Special Hover Effects for Vietnamese Theme */
+.nav-link:hover {
+    text-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+}
+
+.nav-link.active {
+    color: var(--primary-color);
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+    position: relative;
+}
+
+.nav-link.active::before {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Performance Optimizations for Smooth Scrolling */
+.nav-container {
+    /* Anti-jitter optimizations */
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+    
+    /* Smooth transitions */
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    
+    /* Layer promotion for GPU acceleration */
+    contain: layout style paint;
+    isolation: isolate;
+}
+
+/* Reduce paint and layout thrashing */
+.nav-content {
+    will-change: auto;
+    contain: layout style;
+}
+
+.logo h2 {
+    will-change: auto;
+    text-rendering: optimizeSpeed;
+}
+
+.nav-link {
+    will-change: auto;
+    contain: layout style;
+}
+
+/* Animations */
+@keyframes navGlow {
+    0% {
+        opacity: 0.3;
+        transform: scaleX(0.8);
+    }
+    100% {
+        opacity: 0.7;
+        transform: scaleX(1.2);
+    }
+}
+
+@keyframes subtitleGlow {
+    0% {
+        opacity: 0.6;
+        text-shadow: 0 0 5px rgba(212, 175, 55, 0.2);
+    }
+    100% {
+        opacity: 1;
+        text-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+    }
+}
+
+@keyframes logoSymbol {
+    0% {
+        transform: translateY(-50%) scale(1) rotate(0deg);
+        opacity: 0.6;
+    }
+    100% {
+        transform: translateY(-50%) scale(1.1) rotate(5deg);
+        opacity: 1;
+    }
+}
+
+@keyframes logoAccent {
+    0% {
+        width: 20px;
+        opacity: 0.4;
+    }
+    100% {
+        width: 40px;
+        opacity: 0.8;
+    }
+}
+
+@keyframes borderFlow {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+@keyframes arrowPulse {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes mobilePattern {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 30px 30px;
+    }
+}
+
+/* High DPI Support */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .logo h2::before,
+    .logo h2::after {
+        filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.8));
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .nav-container::before,
+    .logo h2::before,
+    .logo h2::after,
+    .nav-link::before {
+        animation: none;
+    }
+    
+    .nav-container,
+    .nav-link,
+    .logo h2 {
+        transition: none;
+    }
+}
+
+/* Dark Mode Enhancements */
+@media (prefers-color-scheme: dark) {
+    .nav-container {
+        background: linear-gradient(135deg, 
+            rgba(10, 10, 10, 0.98) 0%,
+            rgba(20, 20, 20, 0.96) 50%,
+            rgba(10, 10, 10, 0.98) 100%);
+    }
+}
+
+/* Print Styles */
+@media print {
+    .nav-container {
+        display: none;
+    }
+}

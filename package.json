@@ -1,0 +1,60 @@
+{
+  "name": "viet-su-truong-ca",
+  "version": "1.0.0",
+  "description": "Việt Sử Trường Ca: Tiếng Vọng Ngàn Năm - Vietnamese Historical RPG Web Game",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "npx http-server -p 8000 -c-1",
+    "build": "npm run minify:css && npm run minify:js && npm run optimize:images",
+    "minify:css": "npx csso-cli css/main.css -o dist/css/main.min.css && npx csso-cli css/hero-section.css -o dist/css/hero-section.min.css && npx csso-cli css/game-sections.css -o dist/css/game-sections.min.css && npx csso-cli css/animations.css -o dist/css/animations.min.css",
+    "minify:js": "npx terser js/main.js -o dist/js/main.min.js && npx terser js/video-controller.js -o dist/js/video-controller.min.js && npx terser js/three-scene.js -o dist/js/three-scene.min.js && npx terser js/particles.js -o dist/js/particles.min.js && npx terser js/scroll-animations.js -o dist/js/scroll-animations.min.js && npx terser js/navigation.js -o dist/js/navigation.min.js",
+    "optimize:images": "npx imagemin assets/*.jpg --out-dir=dist/assets",
+    "dev": "npx live-server --port=8000 --no-browser",
+    "lint": "npx eslint js/*.js",
+    "format": "npx prettier --write js/*.js css/*.css",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "game",
+    "webgl",
+    "threejs",
+    "vietnamese",
+    "history",
+    "rpg",
+    "pixel-art",
+    "hollow-knight-inspired"
+  ],
+  "author": "Việt Sử Trường Ca Development Team",
+  "license": "MIT",
+  "devDependencies": {
+    "csso-cli": "^4.0.1",
+    "eslint": "^8.57.0",
+    "http-server": "^14.1.1",
+    "imagemin": "^8.0.1",
+    "imagemin-cli": "^8.0.0",
+    "live-server": "^1.2.2",
+    "prettier": "^3.2.5",
+    "terser": "^5.28.1"
+  },
+  "dependencies": {
+    "gsap": "^3.12.2",
+    "three": "^0.160.1"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/viet-su-truong-ca.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/viet-su-truong-ca/issues"
+  },
+  "homepage": "https://your-username.github.io/viet-su-truong-ca/"
+}
