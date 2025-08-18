@@ -1,0 +1,8 @@
+# CSV định dạng: folder,url,filename(tùy chọn)
+# folder: tên thư mục con bên trong card/ (ví dụ: aulac, ngoquyen, ...)
+# url: link Google Drive (file hoặc folder)
+# filename: tên file muốn lưu (bỏ trống để giữ tên gốc)
+# Ví dụ:
+# aulac,https://drive.google.com/file/d/1AbCdEfGh123456789/view?usp=drive_link,anh1.png
+# ngoquyen,https://drive.google.com/drive/folders/1ZXCVB123_asdfQWER?usp=drive_link,
+

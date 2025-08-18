@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta name="dsqr-id" content="71">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hiepuochac Mang - Việt Sử Trường Ca</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header với hình ảnh */
+        .hero-section {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url('72.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            z-index: 2;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 5rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.8);
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.8rem;
+            font-weight: 300;
+            margin-bottom: 2.5rem;
+            opacity: 0.95;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+
+        .hero-period {
+            background: rgba(255, 215, 0, 0.25);
+            backdrop-filter: blur(15px);
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-weight: 600;
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            font-size: 1.2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+
+
+        /* Main content */
+        .main-content {
+            padding: 5rem 0;
+            background: linear-gradient(180deg, #0f3460 0%, #1a1a2e 100%);
+            position: relative;
+            z-index: 10;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #FFD700;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 3px;
+        }
+
+        /* Infographic Grid */
+        .infographic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.2);
+            border-color: rgba(255, 215, 0, 0.5);
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+        }
+
+        .info-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            color: #FFD700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .info-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #FFD700;
+        }
+
+        .info-text {
+            line-height: 1.6;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        /* Timeline */
+        .timeline-section {
+            margin: 4rem 0;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #FFD700, #FFA500);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin: 2rem 0;
+            padding: 0 2rem;
+        }
+
+        .timeline-content {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            position: relative;
+            width: calc(50% - 2rem);
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-left: auto;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: #FFD700;
+            border-radius: 50%;
+            border: 4px solid #1a1a2e;
+            z-index: 2;
+        }
+
+        /* Memorial section */
+        .memorial-section {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.1));
+            border-radius: 30px;
+            padding: 3rem;
+            text-align: center;
+            margin: 4rem 0;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .memorial-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #FFD700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .memorial-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #FFD700;
+        }
+
+        .memorial-date {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .memorial-description {
+            font-style: italic;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-section {
+                background-attachment: scroll;
+            }
+            
+            .hero-title {
+                font-size: 3rem;
+                letter-spacing: 1px;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.3rem;
+            }
+            
+            .hero-period {
+                padding: 15px 25px;
+                font-size: 1rem;
+            }
+            
+            .scroll-indicator span {
+                font-size: 0.8rem;
+            }
+            
+            .timeline::before {
+                left: 20px;
+            }
+            
+            .timeline-content {
+                width: calc(100% - 60px);
+                margin-left: 60px !important;
+            }
+            
+            .timeline-dot {
+                left: 20px;
+            }
+            
+            .infographic-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scroll animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.8);
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator span {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+        }
+
+        .scroll-arrow {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 215, 0, 0.8);
+            border-top: none;
+            border-left: none;
+            transform: rotate(45deg);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section với hình ảnh -->
+    <section class="hero-section">
+        <div class="hero-content fade-in-up">
+            <h1 class="hero-title">HIEPUOCHAC MANG</h1>
+            <p class="hero-subtitle">Chủ đề lịch sử Việt Nam</p>
+            <div class="hero-period">Tư liệu tổng quan</div>
+        </div>
+        
+        <!-- Scroll indicator -->
+        <div class="scroll-indicator">
+            <span>Cuộn xuống để xem thêm</span>
+            <div class="scroll-arrow"></div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Thông tin cơ bản -->
+            <h2 class="section-title">Thông Tin Lịch Sử</h2>
+            
+            <div class="infographic-grid">
+                <div class="info-card fade-in-up">
+                    <i class="fas fa-crown info-icon"></i>
+                    <h3 class="info-title">Vua Đầu Tiên</h3>
+                    <p class="info-text">Các vua Hùng là những vị vua đầu tiên của Việt Nam, lập ra nước Văn Lang - quốc gia đầu tiên trong lịch sử dân tộc ta.</p>
+                </div>
+
+                <div class="info-card fade-in-up">
+                    <i class="fas fa-dragon info-icon"></i>
+                    <h3 class="info-title">Nguồn Gốc Thần Thoại</h3>
+                    <p class="info-text">Theo truyền thuyết, vị vua Hùng đầu tiên là người con cả của Lạc Long Quân và Âu Cơ, tượng trưng cho sự kết hợp giữa rồng và tiên.</p>
+                </div>
+
+                <div class="info-card fade-in-up">
+                    <i class="fas fa-landmark info-icon"></i>
+                    <h3 class="info-title">Kinh Đô Phong Châu</h3>
+                    <p class="info-text">Chọn vùng Phong Châu (nay thuộc Phú Thọ) làm kinh đô, đặt tên nước là Văn Lang, mở đầu cho nền văn minh cổ.</p>
+                </div>
+
+                <div class="info-card fade-in-up">
+                    <i class="fas fa-drum info-icon"></i>
+                    <h3 class="info-title">Di Sản Văn Hóa</h3>
+                    <p class="info-text">Triều đại các vua Hùng đã mở đầu cho nền văn minh lúa nước, tạo ra trống đồng Đông Sơn và nhiều phong tục tập quán đặc sắc.</p>
+                </div>
+            </div>
+
+            <!-- DSQR:START -->
+            <section class="memorial-section fade-in-up">
+                <i class="fas fa-scroll memorial-icon"></i>
+                <h2 class="memorial-title">Tổng quan</h2>
+                <p class="memorial-description">Bối cảnh:<br/>Sau khi đánh chiếm thành công thành Hà Nội lần thứ hai vào năm 1882, quân Pháp tiếp tục gây sức ép lên triều đình nhà Nguyễn, buộc triều đình phải chấp nhận sự bảo hộ của Pháp. Trong bối cảnh triều đình Huế đang bị chia rẽ, một mặt lo sợ trước sức mạnh của Pháp, mặt khác vẫn còn hy vọng vào sự giúp đỡ của nhà Thanh, Pháp đã lợi dụng tình hình này để ép triều đình ký kết Hiệp ước Harmand.<br/>Nội dung:<br/>Triều đình Huế chính thức thừa nhận sự bảo hộ của Pháp ở Bắc Kỳ và Trung Kỳ.<br/>Nam Kỳ (cụ thể là từ Bình Thuận trở vào) được xác định là thuộc địa của Pháp.<br/>Triều đình Huế được cai quản Trung Kỳ, nhưng mọi việc đều phải thông qua viên khâm sứ Pháp ở Huế.<br/>Pháp nắm quyền kiểm soát các tỉnh ở Bắc Kỳ thông qua các công sứ, can thiệp vào mọi công việc của quan lại triều đình.<br/>Triều đình Huế phải chấp nhận sự hiện diện của quân đội Pháp trên lãnh thổ Việt Nam.<br/>Triều đình Huế phải chấp nhận đồng tiền do Ngân hàng Đông Dương phát hành.<br/>Ý nghĩa:<br/>Hiệp ước Harmand là một bước ngoặt quan trọng, đánh dấu sự xác lập chế độ cai trị của thực dân Pháp trên toàn Việt Nam.<br/>Hiệp ước này đã chia Việt Nam thành ba kỳ (Bắc Kỳ, Trung Kỳ, Nam Kỳ) và tạo cơ sở pháp lý cho việc cai trị lâu dài của Pháp ở Việt Nam.<br/>Việc ký kết Hiệp ước Harmand đã gây ra sự bất mãn sâu sắc trong nhân dân và quan lại yêu nước, thúc đẩy các phong trào kháng chiến chống Pháp diễn ra mạnh mẽ hơn.<br/>Mặc dù triều đình Nguyễn coi việc ký kết hiệp ước như một cách để "hoãn binh", nhưng thực tế, hiệp ước đã mở đường cho sự thống trị hoàn toàn của Pháp trên toàn bộ Việt Nam.</p>
+            </section>
+<!-- DSQR:END -->
+
+            <!-- Timeline -->
+            <section class="timeline-section">
+                <h2 class="section-title">Dòng Thời Gian Lịch Sử</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h3 class="info-title">Thành Lập Nước Văn Lang</h3>
+                            <p>Lạc Long Quân và Âu Cơ sinh ra 100 người con, người con cả được tôn làm vua, lập ra nước Văn Lang.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h3 class="info-title">Xây Dựng Kinh Đô</h3>
+                            <p>Chọn vùng Phong Châu làm kinh đô, bắt đầu xây dựng nền tảng cho một quốc gia có tổ chức.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h3 class="info-title">Phát Triển Văn Hóa</h3>
+                            <p>Phát triển nền văn minh lúa nước, tạo ra những sản phẩm văn hóa độc đáo như trống đồng Đông Sơn.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h3 class="info-title">Truyền Thống Giỗ Tổ</h3>
+                            <p>Để lại truyền thống tưởng nhớ tổ tiên, ngày 10/3 âm lịch hằng năm con cháu về dâng hương.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Memorial Section -->
+            <section class="memorial-section fade-in-up">
+                <i class="fas fa-seedling memorial-icon"></i>
+                <h2 class="memorial-title">Ngày Giỗ Tổ Hùng Vương</h2>
+                <p class="memorial-date">Mùng 10 tháng 3 âm lịch hằng năm</p>
+                <p class="memorial-description">
+                    Ngày mà con cháu đời sau dùng để tưởng nhớ công ơn dựng nước của các vua Hùng. 
+                    Đây là ngày Quốc tổ của dân tộc Việt Nam, thể hiện lòng biết ơn sâu sắc đối với những người có công khai sinh ra dân tộc ta.
+                </p>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.8s ease-out forwards';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all cards and sections
+        document.querySelectorAll('.info-card, .timeline-item, .memorial-section').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth scroll behavior
+        document.documentElement.style.scrollBehavior = 'smooth';
+
+        // Parallax effect for hero section
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const heroSection = document.querySelector('.hero-section');
+            if (heroSection) {
+                heroSection.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+
+
+    </script>
+</body>
+</html>
