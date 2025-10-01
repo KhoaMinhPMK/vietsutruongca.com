@@ -51,10 +51,18 @@
 .story-image {
     position: relative;
     height: 500px;
-    overflow: hidden;
+    overflow: hidden; /* CRITICAL: Ensure content doesn't overflow */
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
     transition: all 0.6s ease;
+    
+    /* ADDED: Better containment to prevent layout issues */
+    contain: layout style;
+    isolation: isolate; /* Create new stacking context */
+    
+    /* FIXED: Prevent any scrolling or content leakage */
+    max-height: 500px;
+    min-height: 400px;
 }
 
 .story-image::before {
@@ -82,35 +90,42 @@
 
 .parallax-img {
     width: 100%;
-    height: 140%; /* Giảm xuống để tối ưu performance */
+    height: 115%; /* Further reduced to minimize overflow and content overlap */
     object-fit: cover;
-    object-position: center top; /* Luôn bắt đầu từ đầu ảnh */
+    object-position: center 25%; /* Better positioning to show important content */
     will-change: transform; /* GPU optimization */
-    transform: translate3d(0, 0, 0); /* Force GPU layer, bắt đầu từ 0% */
-    transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1); /* Smoother easing */
-    filter: brightness(0.9) contrast(1.1);
+    transform: translate3d(0, -1%, 0); /* Start from minimal offset */
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Faster easing */
+    filter: brightness(0.98) contrast(1.02); /* Very subtle initial filter */
     contain: layout style paint; /* CSS containment cho performance */
+    backface-visibility: hidden; /* Prevent flickering */
+    
+    /* CRITICAL: Prevent content overflow */
+    max-height: 500px; /* Limit maximum height */
+    overflow: hidden;
 }
 
-/* Scroll Animation States - Bắt đầu từ đầu ảnh */
+
+
+/* Scroll Animation States - FIXED: Much more conservative ranges to prevent content overlap */
 .story-image.scroll-start .parallax-img {
-    transform: translate3d(0, -5%, 0); /* Nhẹ nhàng từ đầu ảnh */
+    transform: translate3d(0, -1%, 0); /* Minimal starting offset */
 }
 
 .story-image.scroll-progress .parallax-img {
-    transform: translate3d(0, -20%, 0); /* Trung bình */
-    filter: brightness(1) contrast(1.2);
+    transform: translate3d(0, -5%, 0); /* Very conservative movement */
+    filter: brightness(1) contrast(1.05); /* Subtle filter changes */
 }
 
 .story-image.scroll-complete .parallax-img {
-    transform: translate3d(0, -35%, 0); /* Giảm xuống để tránh quá mức */
-    filter: brightness(1.05) contrast(1.25);
+    transform: translate3d(0, -8%, 0); /* Maximum 8% to prevent content overlap */
+    filter: brightness(1.02) contrast(1.08); /* Very subtle effects */
 }
 
 .story-image:hover .parallax-img {
-    transform: translate3d(0, -15%, 0) scale(1.02); /* Hover nhẹ nhàng hơn */
-    filter: brightness(1.1) contrast(1.3) saturate(1.05);
-    transition: transform 0.4s ease-out; /* Nhanh hơn cho hover */
+    transform: translate3d(0, -4%, 0) scale(1.01); /* Very subtle hover effect */
+    filter: brightness(1.03) contrast(1.1) saturate(1.01);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1); /* Quick and smooth hover */
 }
 
 .story-text {
@@ -450,16 +465,29 @@
     }
     
     .parallax-img {
-        height: 120%; /* Giảm height trên mobile cho performance */
-        transform: translateY(-5%);
+        height: 105%; /* Minimal height increase on mobile */
+        transform: translate3d(0, 0%, 0); /* Start from neutral position on mobile */
+        transition: transform 0.3s ease-out; /* Faster transitions on mobile */
+        object-position: center 30%; /* Better positioning for mobile */
     }
     
     .story-image.scroll-progress .parallax-img {
-        transform: translateY(-15%);
+        transform: translate3d(0, -2%, 0); /* Very minimal movement on mobile */
     }
     
     .story-image.scroll-complete .parallax-img {
-        transform: translateY(-25%);
+        transform: translate3d(0, -4%, 0); /* Maximum 4% movement on mobile */
+    }
+    
+    .story-image:hover .parallax-img {
+        transform: translate3d(0, -2%, 0) scale(1.005); /* Nearly no hover effect on mobile */
+    }
+    
+    /* ADDED: Better story section spacing on mobile */
+    .story-image {
+        height: 350px; /* Reduced height on mobile */
+        min-height: 300px;
+        border-radius: 15px;
     }
     
     .story-text {

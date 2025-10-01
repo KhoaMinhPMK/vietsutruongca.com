@@ -13,11 +13,12 @@ class ImageScrollController {
         this.hoverDebounceTimer = null;
           // Performance settings
         this.performanceSettings = {
-            throttleInterval: 16, // 60fps (16ms intervals)
-            hoverDebounce: 100,   // 100ms delay for hover
+            throttleInterval: this.detectMobile() ? 32 : 16, // 30fps mobile, 60fps desktop
+            hoverDebounce: 150,   // Increased debounce for better performance
             reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
             isLowEndDevice: this.detectLowEndDevice(),
-            isMobile: this.detectMobile()
+            isMobile: this.detectMobile(),
+            adaptiveThrottling: true // Enable adaptive throttling based on performance
         };
         
         this.init();
@@ -61,7 +62,7 @@ class ImageScrollController {
      */
     init() {
         if (this.isInitialized) return;
-          // Tìm tất cả images cần áp dụng effect
+          // Tìm tất cả images cần áp dụng effect (chỉ những ảnh có class parallax-img)
         this.images = document.querySelectorAll('.parallax-img');
         
         if (this.images.length === 0) {
@@ -90,7 +91,16 @@ class ImageScrollController {
             // ENHANCED: Smart throttling with adaptive timing
             const currentTime = performance.now();
             const timeDiff = currentTime - this.lastScrollTime;
-            const minInterval = this.performanceSettings.throttleInterval;
+            let minInterval = this.performanceSettings.throttleInterval;
+            
+            // ADAPTIVE: Increase throttling if performance is poor
+            if (this.performanceSettings.adaptiveThrottling && this.performanceMonitor) {
+                const recentFrameTime = currentTime - this.performanceMonitor.lastFrameTime;
+                if (recentFrameTime > 32) { // If frame time > 32ms (< 30fps)
+                    minInterval = Math.min(minInterval * 1.5, 50); // Increase throttling
+                }
+                this.performanceMonitor.lastFrameTime = currentTime;
+            }
             
             // Skip if not enough time has passed (prevents excessive calls)
             if (timeDiff < minInterval) {
@@ -258,21 +268,37 @@ class ImageScrollController {
             return;
         }
         
+        // ENHANCED: Check for active GSAP ScrollTrigger on this element
+        if (window.ScrollTrigger) {
+            const triggers = window.ScrollTrigger.getAll();
+            const hasActiveGSAPTrigger = triggers.some(trigger => {
+                return trigger.trigger === container || 
+                       trigger.trigger === img ||
+                       container.contains(trigger.trigger) ||
+                       (trigger.vars && trigger.vars.trigger === container);
+            });
+            
+            if (hasActiveGSAPTrigger) {
+                container.dataset.gsapControlled = 'true';
+                return;
+            }
+        }
+        
         // Adjust intensity based on device performance
         const intensity = this.performanceSettings.isLowEndDevice ? 0.5 : 1;
         const mobileReduction = this.performanceSettings.isMobile ? 0.7 : 1;
         
-        // IMPROVED: Smoother translateY calculation with better easing
-        const translateYStart = 0;
-        const translateYEnd = -25 * intensity * mobileReduction; // Reduced from -35 for smoother effect
+        // IMPROVED: Much more conservative translateY calculation to prevent content overlap
+        const translateYStart = -1; // Minimal starting offset
+        const translateYEnd = -8 * intensity * mobileReduction; // Very conservative range (max 8%)
         const easedProgress = this.easeOutCubic(progress); // Apply easing for smoother animation
         const translateY = translateYStart + (translateYEnd - translateYStart) * easedProgress;
 
-        // OPTIMIZED: Reduced effects intensity for smoother performance
-        const scale = 1 + (easedProgress * 0.02 * intensity); // Further reduced from 0.03
-        const brightness = 0.95 + (easedProgress * 0.1 * intensity); // Reduced for subtlety
-        const contrast = 1.02 + (easedProgress * 0.06 * intensity); // Reduced for smoother look
-        const saturate = 1 + (easedProgress * 0.03 * intensity); // Reduced for performance
+        // OPTIMIZED: Further reduced effects intensity for smoother performance
+        const scale = 1 + (easedProgress * 0.015 * intensity); // Further reduced from 0.02
+        const brightness = 0.97 + (easedProgress * 0.08 * intensity); // More subtle brightness
+        const contrast = 1.01 + (easedProgress * 0.04 * intensity); // More subtle contrast
+        const saturate = 1 + (easedProgress * 0.02 * intensity); // More subtle saturation
 
         // CRITICAL FIX: Use will-change and transform3d for GPU acceleration
         img.style.willChange = 'transform, filter';

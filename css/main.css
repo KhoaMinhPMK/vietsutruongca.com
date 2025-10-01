@@ -633,9 +633,36 @@ p {
         transform: none !important;
         transition: none !important;
         will-change: auto !important;
+        height: 100% !important; /* Use natural height */
+        object-position: center !important;
     }
     
     .story-image {
         contain: none !important;
+    }
+    
+    .story-image.scroll-start .parallax-img,
+    .story-image.scroll-progress .parallax-img,
+    .story-image.scroll-complete .parallax-img,
+    .story-image:hover .parallax-img {
+        transform: none !important;
+        filter: none !important;
+    }
+}
+
+/* ADDED: Disable parallax on very small screens or low-end devices */
+@media (max-width: 480px), (max-height: 600px) {
+    .parallax-img {
+        height: 100% !important;
+        transform: none !important;
+        object-position: center !important;
+    }
+    
+    .story-image.scroll-start .parallax-img,
+    .story-image.scroll-progress .parallax-img,
+    .story-image.scroll-complete .parallax-img,
+    .story-image:hover .parallax-img {
+        transform: none !important;
+        filter: brightness(1) contrast(1) saturate(1) !important;
     }
 }

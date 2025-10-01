@@ -3,24 +3,52 @@ class VideoController {
     constructor() {
         this.video = document.getElementById('hero-video');
         this.overlay = document.querySelector('.video-overlay');
+        this.fallback = document.querySelector('.video-fallback');
         this.isPlaying = false;
         this.cycleStartTime = 3; // Start video at 3 seconds
         this.cycleEndTime = 35; // End video at 35 seconds
         this.fadeDuration = 2000; // 2 seconds fade duration
+        this.videoLoaded = false;
+        this.retryCount = 0;
+        this.maxRetries = 2;
         
         this.init();
     }    init() {
         if (!this.video) {
+            this.showFallback();
             return;
         }
 
+        // Set timeout for video loading
+        this.loadingTimeout = setTimeout(() => {
+            if (!this.videoLoaded) {
+                console.log('Video loading timeout, showing fallback');
+                this.handleVideoError();
+            }
+        }, 5000); // 5 second timeout
+
         // Wait for video metadata to load
         this.video.addEventListener('loadedmetadata', () => {
+            clearTimeout(this.loadingTimeout);
+            this.videoLoaded = true;
             this.setupVideoProperties();
+            this.hideFallback();
             this.startVideoCycle();
-        });        // Handle video loading errors
+        });
+
+        // Handle video loading errors
         this.video.addEventListener('error', (e) => {
+            clearTimeout(this.loadingTimeout);
             this.handleVideoError();
+        });
+
+        // Handle video can play
+        this.video.addEventListener('canplay', () => {
+            if (!this.videoLoaded) {
+                clearTimeout(this.loadingTimeout);
+                this.videoLoaded = true;
+                this.hideFallback();
+            }
         });
 
         // Preload video
@@ -110,11 +138,42 @@ class VideoController {
             }, this.fadeDuration);
         });
     }    handleVideoError() {
-        // Hide video and show a fallback background
-        this.video.style.display = 'none';
-        this.overlay.style.background = 'linear-gradient(135deg, #0f0f0f 0%, #2a1810 50%, #1a1a1a 100%)';
+        console.log(`Video loading failed (attempt ${this.retryCount + 1}/${this.maxRetries})`);
+        
+        if (this.retryCount < this.maxRetries) {
+            this.retryCount++;
+            setTimeout(() => {
+                this.video.load();
+            }, 1000 * this.retryCount); // Progressive retry delay
+        } else {
+            // Final fallback
+            this.showFallback();
+            console.log('Video loading failed, using static fallback');
+        }
+    }
+
+    showFallback() {
+        if (this.video) {
+            this.video.style.display = 'none';
+        }
+        
+        if (this.fallback) {
+            this.fallback.style.opacity = '1';
+            this.fallback.classList.remove('hidden');
+        }
+        
+        // Keep overlay for proper visual effect
         this.overlay.classList.remove('transparent');
         this.overlay.classList.add('fade-in');
+    }
+
+    hideFallback() {
+        if (this.fallback) {
+            this.fallback.style.opacity = '0';
+            setTimeout(() => {
+                this.fallback.classList.add('hidden');
+            }, 2000);
+        }
     }
 
     // Method to pause video cycle (useful for when user interacts with page)

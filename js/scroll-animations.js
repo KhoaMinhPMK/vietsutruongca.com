@@ -225,38 +225,14 @@ class ScrollAnimations {
             });
         });
     }    setupParallaxEffects() {
-        // CRITICAL FIX: Check if ImageScrollController is handling parallax
-        const hasImageScrollController = window.ImageScrollController !== undefined;
+        // CRITICAL FIX: Disable GSAP parallax for story images to avoid conflicts
+        // Let ImageScrollController handle story image parallax for better performance
         
-        // Parallax images - IMPROVED conflict resolution
-        const parallaxImages = document.querySelectorAll('.parallax-img');
-        parallaxImages.forEach(img => {
-            const container = img.closest('.story-image');
-            
-            // FIXED: Mark as GSAP controlled to prevent ImageScrollController conflicts
-            if (container) {
-                container.dataset.gsapControlled = 'true';
-            }
-            
-            // OPTIMIZED: Reduced parallax intensity for smoother performance
-            gsap.to(img, {
-                yPercent: -20, // Reduced from -30 for smoother effect
-                ease: "none",
-                scrollTrigger: {
-                    trigger: img.closest('.story-card'),
-                    start: "top bottom",
-                    end: "bottom top",
-                    scrub: 1.5, // Increased scrub for smoother animation
-                    invalidateOnRefresh: true,
-                    onToggle: (self) => {
-                        // Notify other systems about GSAP control
-                        if (container) {
-                            container.dataset.gsapActive = self.isActive;
-                        }
-                    }
-                }
-            });
-        });
+        // Skip story image parallax - let ImageScrollController handle it
+        // const parallaxImages = document.querySelectorAll('.parallax-img');
+        // This prevents double animation conflicts
+        
+        console.log('📝 GSAP parallax disabled for story images to prevent conflicts');
 
         // Background parallax for sections - IMPROVED performance
         const sections = document.querySelectorAll('.story-section, .characters-section, .gameplay-section');

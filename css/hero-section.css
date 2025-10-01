@@ -37,13 +37,32 @@
     opacity: 1;
 }
 
+/* Video Fallback */
+.video-fallback {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 1;
+    transition: opacity 2s ease-in-out;
+    z-index: 0;
+}
+
+.video-fallback.hidden {
+    opacity: 0;
+}
+
 .video-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.7); /* Slightly lighter for better text readability */
     opacity: 1;
     transition: opacity 2s ease-in-out;
     z-index: 2;
