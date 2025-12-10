@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta name="dsqr-id" content="79">
 
@@ -9,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
-        
+
         * {
             margin: 0;
             padding: 0;
@@ -27,7 +28,7 @@
         /* Header với hình ảnh */
         .hero-section {
             height: 100vh;
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url('81.jpg');
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('81.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -50,7 +51,7 @@
             font-size: 5rem;
             font-weight: 900;
             margin-bottom: 1.5rem;
-            text-shadow: 4px 4px 8px rgba(0,0,0,0.8);
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
             background: linear-gradient(45deg, #FFD700, #FFA500);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -63,7 +64,7 @@
             font-weight: 300;
             margin-bottom: 2.5rem;
             opacity: 0.95;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
         }
 
         .hero-period {
@@ -74,7 +75,7 @@
             font-weight: 600;
             border: 2px solid rgba(255, 215, 0, 0.4);
             font-size: 1.2rem;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
 
@@ -155,7 +156,7 @@
             margin-bottom: 1rem;
             display: block;
             color: #FFD700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .info-title {
@@ -240,7 +241,7 @@
             font-size: 4rem;
             margin-bottom: 1rem;
             color: #FFD700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .memorial-title {
@@ -270,38 +271,38 @@
             .hero-section {
                 background-attachment: scroll;
             }
-            
+
             .hero-title {
                 font-size: 3rem;
                 letter-spacing: 1px;
             }
-            
+
             .hero-subtitle {
                 font-size: 1.3rem;
             }
-            
+
             .hero-period {
                 padding: 15px 25px;
                 font-size: 1rem;
             }
-            
+
             .scroll-indicator span {
                 font-size: 0.8rem;
             }
-            
+
             .timeline::before {
                 left: 20px;
             }
-            
+
             .timeline-content {
                 width: calc(100% - 60px);
                 margin-left: 60px !important;
             }
-            
+
             .timeline-dot {
                 left: 20px;
             }
-            
+
             .infographic-grid {
                 grid-template-columns: 1fr;
             }
@@ -313,6 +314,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -339,7 +341,7 @@
         .scroll-indicator span {
             font-size: 0.9rem;
             margin-bottom: 10px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
         }
 
         .scroll-arrow {
@@ -352,18 +354,26 @@
         }
 
         @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
                 transform: translateX(-50%) translateY(0);
             }
+
             40% {
                 transform: translateX(-50%) translateY(-10px);
             }
+
             60% {
                 transform: translateX(-50%) translateY(-5px);
             }
         }
     </style>
 </head>
+
 <body>
     <!-- Hero Section với hình ảnh -->
     <section class="hero-section">
@@ -372,7 +382,7 @@
             <p class="hero-subtitle">Nữ vương mở đầu truyền thống chống ngoại xâm</p>
             <div class="hero-period">Năm 40 – 43</div>
         </div>
-        
+
         <!-- Scroll indicator -->
         <div class="scroll-indicator">
             <span>Cuộn xuống để xem thêm</span>
@@ -385,7 +395,7 @@
         <div class="container">
             <!-- Thông tin cơ bản -->
             <h2 class="section-title">Thông Tin Lịch Sử</h2>
-            
+
             <div class="infographic-grid">
                 <div class="info-card fade-in-up">
                     <i class="fas fa-user-shield info-icon"></i>
@@ -396,7 +406,8 @@
                 <div class="info-card fade-in-up">
                     <i class="fas fa-bolt info-icon"></i>
                     <h3 class="info-title">Khởi nghĩa Hát Môn</h3>
-                    <p class="info-text">Năm 40 phất cờ tại Hát Môn, đáp lại bạo chính Tô Định và trả thù cho Thi Sách.</p>
+                    <p class="info-text">Năm 40 phất cờ tại Hát Môn, đáp lại bạo chính Tô Định và trả thù cho Thi Sách.
+                    </p>
                 </div>
 
                 <div class="info-card fade-in-up">
@@ -416,10 +427,17 @@
             <section class="memorial-section fade-in-up">
                 <i class="fas fa-scroll memorial-icon"></i>
                 <h2 class="memorial-title">Tổng quan</h2>
-                <p class="memorial-description">Nhà Nguyễn là triều đại phong kiến cuối cùng của Việt Nam, tồn tại từ năm 1802 đến 1945, với 13 đời vua. Triều đại này được thành lập bởi Nguyễn Ánh (vua Gia Long) sau khi đánh bại nhà Tây Sơn, thống nhất đất nước và chọn Huế làm kinh đô. Triều Nguyễn chứng kiến nhiều biến động, đặc biệt là sự xâm lược của thực dân Pháp, và kết thúc khi vua Bảo Đại thoái vị vào năm 1945.</p>
-                <p class="memorial-description">Thành lập:<br/>Nguyễn Ánh (vua Gia Long) thống nhất đất nước sau khi đánh bại nhà Tây Sơn, lên ngôi năm 1802 và chọn Huế làm kinh đô.<br/>Thống nhất và phát triển:<br/>Triều Nguyễn đã thống nhất đất nước sau thời kỳ nội chiến, xây dựng và phát triển nhiều mặt, đặc biệt là kinh đô Huế.<br/>Sự xâm lược của Pháp:<br/>Giữa thế kỷ 19, thực dân Pháp bắt đầu xâm lược Việt Nam, gây ra nhiều khó khăn cho triều Nguyễn. Triều Nguyễn dần suy yếu do sự can thiệp của Pháp, các vua Nguyễn dần mất quyền lực thực tế.<br/>Kết thúc triều đại:<br/>Năm 1945, vua Bảo Đại tuyên bố thoái vị, chấm dứt triều đại nhà Nguyễn, mở ra một kỷ nguyên mới cho Việt Nam.<br/>Các giai đoạn chính:<br/>Thời kỳ đầu: Vua Gia Long, Minh Mạng, Thiệu Trị xây dựng và củng cố đất nước.<br/>Thời kỳ suy yếu: Các vua Tự Đức, Dục Đức, Hiệp Hòa, Kiến Phúc, Hàm Nghi, Đồng Khánh, Thành Thái, Duy Tân, Khải Định, Bảo Đại đều đối mặt với sự can thiệp của Pháp.<br/>Thời kỳ cuối: Vua Bảo Đại thoái vị, chấm dứt triều đại nhà Nguyễn.</p>
+                <p class="memorial-description"><strong>Diễn biến:</strong> Hai Bà Trưng phất cờ khởi nghĩa tại Hát Môn
+                    (Phúc Thọ, Hà Nội) để đáp lại chính sách cai trị tàn bạo của nhà Đông Hán, đứng đầu là Thái thú Tô
+                    Định, và để trả thù cho chồng của Trưng Trắc là Thi Sách bị giết hại.</p>
+                <p class="memorial-description"><strong>Kết quả:</strong> Cuộc khởi nghĩa nhanh chóng được hưởng ứng,
+                    lật đổ chính quyền đô hộ, giải phóng 65 thành trì. Trưng Trắc tự xưng là vua (Trưng Nữ Vương), đóng
+                    đô ở Mê Linh, lập lại nền độc lập dân tộc.</p>
+                <p class="memorial-description"><strong>Kết cục:</strong> Năm 42, nhà Hán cử danh tướng Mã Viện đem quân
+                    sang đàn áp. Sau nhiều trận chiến không cân sức, Hai Bà đã tuẫn tiết tại sông Hát để bảo toàn khí
+                    tiết.</p>
             </section>
-<!-- DSQR:END -->
+            <!-- DSQR:END -->
 
             <!-- Timeline -->
             <section class="timeline-section">
@@ -432,7 +450,7 @@
                             <p>Hiệu triệu khắp nơi, nghĩa sĩ khắp châu quận hưởng ứng.</p>
                         </div>
                     </div>
-                    
+
                     <div class="timeline-item">
                         <div class="timeline-dot"></div>
                         <div class="timeline-content">
@@ -440,7 +458,7 @@
                             <p>Lật đổ chính quyền đô hộ, khôi phục độc lập.</p>
                         </div>
                     </div>
-                    
+
                     <div class="timeline-item">
                         <div class="timeline-dot"></div>
                         <div class="timeline-content">
@@ -448,7 +466,7 @@
                             <p>Giao tranh ác liệt, cục diện bất lợi.</p>
                         </div>
                     </div>
-                    
+
                     <div class="timeline-item">
                         <div class="timeline-dot"></div>
                         <div class="timeline-content">
@@ -464,7 +482,8 @@
                 <i class="fas fa-landmark memorial-icon"></i>
                 <h2 class="memorial-title">Tưởng niệm Hai Bà Trưng</h2>
                 <p class="memorial-date">Đền Hát Môn – Mê Linh</p>
-                <p class="memorial-description">Tôn vinh nữ anh hùng dân tộc, biểu tượng độc lập và lòng tự tôn của người Việt.</p>
+                <p class="memorial-description">Tôn vinh nữ anh hùng dân tộc, biểu tượng độc lập và lòng tự tôn của
+                    người Việt.</p>
             </section>
         </div>
     </main>
@@ -503,5 +522,7 @@
 
 
     </script>
-<script src="../auto-background.js"></script></body>
+    <script src="../auto-background.js"></script>
+</body>
+
 </html>
