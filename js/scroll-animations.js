@@ -158,71 +158,23 @@ class ScrollAnimations {
             }
         });
 
-        // Story cards
+        // Story cards - DISABLED scroll animation for performance
+        // Cards are now visible immediately
         const storyCards = document.querySelectorAll('.story-card');
         storyCards.forEach((card, index) => {
-            const isReverse = card.classList.contains('reverse');
-            const direction = isReverse ? 100 : -100;
-            
-            gsap.set(card, { opacity: 0, x: direction, rotationY: isReverse ? -15 : 15 });
-            
-            ScrollTrigger.create({
-                trigger: card,
-                start: "top 75%",
-                onEnter: () => {
-                    gsap.to(card, {
-                        opacity: 1,
-                        x: 0,
-                        rotationY: 0,
-                        duration: 1.2,
-                        ease: "power3.out",
-                        delay: index * 0.2
-                    });
-                }
-            });
+            gsap.set(card, { opacity: 1, x: 0, rotationY: 0 });
         });
 
-        // Character cards
+        // Character cards - DISABLED scroll animation for performance
         const characterCards = document.querySelectorAll('.character-card');
         characterCards.forEach((card, index) => {
-            gsap.set(card, { opacity: 0, y: 100, scale: 0.8, rotationX: 45 });
-            
-            ScrollTrigger.create({
-                trigger: card,
-                start: "top 80%",
-                onEnter: () => {
-                    gsap.to(card, {
-                        opacity: 1,
-                        y: 0,
-                        scale: 1,
-                        rotationX: 0,
-                        duration: 1,
-                        ease: "back.out(1.7)",
-                        delay: index * 0.3
-                    });
-                }
-            });
+            gsap.set(card, { opacity: 1, y: 0, scale: 1, rotationX: 0 });
         });
 
-        // Feature cards
+        // Feature cards - DISABLED scroll animation for performance
         const featureCards = document.querySelectorAll('.feature-card');
         featureCards.forEach((card, index) => {
-            gsap.set(card, { opacity: 0, y: 50, scale: 0.9 });
-            
-            ScrollTrigger.create({
-                trigger: card,
-                start: "top 85%",
-                onEnter: () => {
-                    gsap.to(card, {
-                        opacity: 1,
-                        y: 0,
-                        scale: 1,
-                        duration: 0.8,
-                        ease: "power2.out",
-                        delay: index * 0.15
-                    });
-                }
-            });
+            gsap.set(card, { opacity: 1, y: 0, scale: 1 });
         });
     }    setupParallaxEffects() {
         // CRITICAL FIX: Disable GSAP parallax for story images to avoid conflicts
@@ -316,40 +268,14 @@ class ScrollAnimations {
             });
         });
     }    setupImageAnimations() {
-        // Image reveal animations - IMPROVED with conflict prevention
+        // Image reveal animations - DISABLED for performance
+        // Images are now visible immediately without animations
         const storyImages = document.querySelectorAll('.story-image');
         storyImages.forEach(imageContainer => {
             const img = imageContainer.querySelector('img');
-            
-            // CRITICAL FIX: Mark container as GSAP controlled
-            imageContainer.dataset.gsapControlled = 'true';
-            
-            // OPTIMIZED: Reduced scale for smoother performance
-            gsap.set(img, { scale: 1.2 }); // Reduced from 1.3
-            gsap.set(imageContainer, { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)" });
-            
-            ScrollTrigger.create({
-                trigger: imageContainer,
-                start: "top 80%",
-                invalidateOnRefresh: true,
-                onEnter: () => {
-                    const tl = gsap.timeline();
-                    tl.to(imageContainer, {
-                        clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-                        duration: 1, // Reduced from 1.2 for faster reveal
-                        ease: "power3.out"
-                    })
-                    .to(img, {
-                        scale: 1,
-                        duration: 1, // Reduced from 1.2
-                        ease: "power2.out"
-                    }, 0.1); // Slightly offset for smoother transition
-                },
-                onLeave: () => {
-                    // ADDED: Cleanup when element leaves viewport
-                    imageContainer.dataset.gsapActive = 'false';
-                }
-            });
+            // Set images to be fully visible immediately
+            gsap.set(img, { scale: 1 });
+            gsap.set(imageContainer, { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" });
         });
 
         // Character image hover effects - OPTIMIZED for performance

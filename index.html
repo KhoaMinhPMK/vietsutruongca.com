@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Việt Sử Trường Ca: Tiếng Vọng Ngàn Năm</title>      <!-- CSS Files -->
+    <title>Việt Sử Trường Ca: Tiếng Vọng Ngàn Năm</title> <!-- CSS Files -->
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/header-enhanced.css">
-    <link rel="stylesheet" href="css/navigation-enhanced.css">    <link rel="stylesheet" href="css/hero-section.css">    <link rel="stylesheet" href="css/game-sections.css">
+    <link rel="stylesheet" href="css/navigation-enhanced.css">
+    <link rel="stylesheet" href="css/hero-section.css">
+    <link rel="stylesheet" href="css/game-sections.css">
     <link rel="stylesheet" href="css/character-slide.css">
     <link rel="stylesheet" href="css/animations.css">
-    
+
     <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-      <!-- Vietnamese Historical Fonts -->
+    <!-- Vietnamese Historical Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Noto+Serif:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
     <!-- Vietnamese Traditional Typography -->
     <style>
         @font-face {
@@ -26,7 +31,7 @@
             src: url('https://fonts.cdnfonts.com/css/vni-times') format('woff2');
             font-display: swap;
         }
-        
+
         @font-face {
             font-family: 'Be Vietnam Pro';
             src: url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
@@ -34,15 +39,18 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="nav-container">
-        <div class="nav-content">            <div class="logo">
+        <div class="nav-content">
+            <div class="logo">
                 <h2>
                     <span class="logo-main">Việt Sử Trường Ca</span>
                     <span class="logo-subtitle">Tiếng Vọng Ngàn Năm</span>
                 </h2>
-            </div>            <div class="nav-menu">
+            </div>
+            <div class="nav-menu">
                 <a href="#home" class="nav-link"><span>Trang Chủ</span></a>
                 <a href="#story" class="nav-link"><span>Câu Chuyện</span></a>
                 <a href="#characters" class="nav-link"><span>Nhân Vật</span></a>
@@ -67,30 +75,32 @@
             <div class="video-fallback" style="background-image: url('assets/hero.jpg')"></div>
             <div class="video-overlay"></div>
         </div>
-        
+
         <div class="hero-content">
             <div class="hero-text">
-                <h1 class="hero-title">
-                    <span class="title-line">Việt Sử Trường Ca</span>
-                    <span class="subtitle">Tiếng Vọng Ngàn Năm</span>
-                </h1>
-                <p class="hero-description">
-                    Khám phá hành trình huyền thoại qua thời kỳ Văn Lang - Âu Lạc. 
-                    Hóa thân thành anh hùng trong thế giới pixel art đầy màu sắc và cảm xúc.
-                </p>
+                <div class="hero-text-backdrop">
+                    <h1 class="hero-title">
+                        <span class="title-line">Việt Sử Trường Ca</span>
+                        <span class="subtitle">Tiếng Vọng Ngàn Năm</span>
+                    </h1>
+                    <p class="hero-description">
+                        Khám phá hành trình huyền thoại qua thời kỳ Văn Lang - Âu Lạc.
+                        Hóa thân thành anh hùng trong thế giới pixel art đầy màu sắc và cảm xúc.
+                    </p>
+                </div>
                 <div class="hero-buttons">
                     <button class="btn btn-primary" id="play-btn">Chơi Ngay</button>
                     <button class="btn btn-secondary" id="trailer-btn">Xem Trailer</button>
                 </div>
             </div>
         </div>
-        
+
         <!-- 3D Scene Container -->
         <div id="three-container"></div>
-        
+
         <!-- Particle System -->
         <div class="particles" id="particles"></div>
-        
+
         <!-- Scroll Indicator -->
         <div class="scroll-indicator">
             <div class="scroll-mouse">
@@ -106,7 +116,7 @@
                 <h2 class="section-title">Câu Chuyện Huyền Thoại</h2>
                 <p class="section-subtitle">Khám phá những trang sử hào hùng của dân tộc</p>
             </div>
-            
+
             <div class="story-content">
                 <div class="story-card">
                     <div class="story-image">
@@ -114,30 +124,30 @@
                     </div>
                     <div class="story-text">
                         <h3>Thời Kỳ Văn Lang</h3>
-                        <p>Bước vào thế giới của các vua Hùng, nơi huyền thoại và lịch sử hòa quyện. 
-                        Khám phá những câu chuyện về nguồn gốc dân tộc, về tinh thần đoàn kết và lòng yêu nước.</p>
+                        <p>Bước vào thế giới của các vua Hùng, nơi huyền thoại và lịch sử hòa quyện.
+                            Khám phá những câu chuyện về nguồn gốc dân tộc, về tinh thần đoàn kết và lòng yêu nước.</p>
                     </div>
                 </div>
-                
+
                 <div class="story-card reverse">
                     <div class="story-image">
                         <img src="assets/b.jpg" alt="Âu Lạc" class="parallax-img">
                     </div>
                     <div class="story-text">
                         <h3>Âu Lạc Hùng Mạnh</h3>
-                        <p>Theo chân An Dương Vương trong cuộc chiến bảo vệ đất nước. 
-                        Trải nghiệm những trận chiến hùng tráng và những quyết định định mệnh.</p>
+                        <p>Theo chân An Dương Vương trong cuộc chiến bảo vệ đất nước.
+                            Trải nghiệm những trận chiến hùng tráng và những quyết định định mệnh.</p>
                     </div>
                 </div>
-                
+
                 <div class="story-card">
                     <div class="story-image">
                         <img src="assets/c.jpg" alt="Văn hóa" class="parallax-img">
                     </div>
                     <div class="story-text">
                         <h3>Văn Hóa Rực Rỡ</h3>
-                        <p>Khám phá nền văn minh cổ đại với những phong tục tập quán, 
-                        tín ngưỡng và nghệ thuật đặc sắc của tổ tiên ta.</p>
+                        <p>Khám phá nền văn minh cổ đại với những phong tục tập quán,
+                            tín ngưỡng và nghệ thuật đặc sắc của tổ tiên ta.</p>
                     </div>
                 </div>
             </div>
@@ -151,8 +161,9 @@
                 <h2 class="section-title">Nhân Vật Huyền Thoại</h2>
                 <p class="section-subtitle">Gặp gỡ những anh hùng và nhân vật lịch sử</p>
             </div>
-            
-            <div class="characters-grid">                <div class="character-card" data-character="hero">
+
+            <div class="characters-grid">
+                <div class="character-card" data-character="hero">
                     <div class="character-image">
                         <img src="assets/hero.jpg" alt="Anh hùng chính">
                         <div class="character-overlay">
@@ -161,7 +172,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="character-card" data-character="king">
                     <div class="character-image">
                         <img src="assets/vuahung.jpg" alt="Vua Hùng">
@@ -172,7 +183,8 @@
                     </div>
                 </div>
             </div>
-        </div>    </section>
+        </div>
+    </section>
 
     <!-- Character Detail Slide Section -->
     <section id="character-details" class="character-slide-section">
@@ -187,9 +199,12 @@
                         <h2 class="character-name">Đại Tướng Quân</h2>
                         <p class="character-title">Người chỉ huy tối cao của quân đội Văn Lang</p>
                         <p class="character-description">
-                            Một trong những vị tướng tài ba nhất thời Văn Lang, được vua Hùng tín nhiệm giao cho trọng trách bảo vệ đất nước. 
-                            Với tài năng quân sự xuất chúng và lòng trung thành tuyệt đối, ông đã dẫn dắt các chiến binh Văn Lang qua vô số trận chiến. 
-                            Tinh thần anh dũng của ông trở thành biểu tượng của sức mạnh và ý chí bất khuất của dân tộc Lạc Việt.
+                            Một trong những vị tướng tài ba nhất thời Văn Lang, được vua Hùng tín nhiệm giao cho trọng
+                            trách bảo vệ đất nước.
+                            Với tài năng quân sự xuất chúng và lòng trung thành tuyệt đối, ông đã dẫn dắt các chiến binh
+                            Văn Lang qua vô số trận chiến.
+                            Tinh thần anh dũng của ông trở thành biểu tượng của sức mạnh và ý chí bất khuất của dân tộc
+                            Lạc Việt.
                         </p>
                         <div class="character-stats">
                             <div class="character-stat">
@@ -221,9 +236,11 @@
                         <h2 class="character-name">Đồ Thư</h2>
                         <p class="character-title">Người gìn giữ tri thức và văn hóa</p>
                         <p class="character-description">
-                            Vị học giả uyên thâm chuyên nghiên cứu và gìn giữ những kiến thức cổ xưa của dân tộc. 
-                            Với trí tuệ sâu sắc và kiến thức rộng lớn về lịch sử, địa lý, và văn hóa, Đồ Thư là cố vấn tin cậy của vua Hùng. 
-                            Ông là người kế thừa và phát triển nền văn minh Đông Sơn, đồng thời là thầy dạy của nhiều anh hùng trẻ.
+                            Vị học giả uyên thâm chuyên nghiên cứu và gìn giữ những kiến thức cổ xưa của dân tộc.
+                            Với trí tuệ sâu sắc và kiến thức rộng lớn về lịch sử, địa lý, và văn hóa, Đồ Thư là cố vấn
+                            tin cậy của vua Hùng.
+                            Ông là người kế thừa và phát triển nền văn minh Đông Sơn, đồng thời là thầy dạy của nhiều
+                            anh hùng trẻ.
                         </p>
                         <div class="character-stats">
                             <div class="character-stat">
@@ -255,9 +272,11 @@
                         <h2 class="character-name">Lạc Long Quân</h2>
                         <p class="character-title">Tổ tiên huyền thoại của dân tộc Việt</p>
                         <p class="character-description">
-                            Vị anh hùng huyền thoại, con rồng cháu tiên, được xem là tổ tiên của dân tộc Việt Nam. 
-                            Với sức mạnh siêu nhiên và lòng yêu nước thiết tha, Lạc Long Quân đã dẫn dắt dân tộc vượt qua nhiều thử thách. 
-                            Ông là biểu tượng của sức mạnh, trí tuệ và tinh thần bất khuất, luôn sẵn sàng xuất hiện để bảo vệ con dân khi đất nước gặp nguy nan.
+                            Vị anh hùng huyền thoại, con rồng cháu tiên, được xem là tổ tiên của dân tộc Việt Nam.
+                            Với sức mạnh siêu nhiên và lòng yêu nước thiết tha, Lạc Long Quân đã dẫn dắt dân tộc vượt
+                            qua nhiều thử thách.
+                            Ông là biểu tượng của sức mạnh, trí tuệ và tinh thần bất khuất, luôn sẵn sàng xuất hiện để
+                            bảo vệ con dân khi đất nước gặp nguy nan.
                         </p>
                         <div class="character-stats">
                             <div class="character-stat">
@@ -289,9 +308,12 @@
                         <h2 class="character-name">Tù Trưởng Miền Núi</h2>
                         <p class="character-title">Thủ lĩnh dũng mãnh của các bộ tộc miền núi</p>
                         <p class="character-description">
-                            Người đứng đầu liên minh các bộ tộc miền núi, nổi tiếng với sức mạnh phi thường và lòng dũng cảm không biết sợ hãi. 
-                            Ông thông thạo địa hình hiểm trở của vùng núi rừng và có thể triệu tập các chiến binh từ khắp các bộ lạc. 
-                            Với tinh thần đoàn kết và ý chí bảo vệ quê hương, ông là đồng minh quan trọng trong việc chống lại các thế lực xâm lược.
+                            Người đứng đầu liên minh các bộ tộc miền núi, nổi tiếng với sức mạnh phi thường và lòng dũng
+                            cảm không biết sợ hãi.
+                            Ông thông thạo địa hình hiểm trở của vùng núi rừng và có thể triệu tập các chiến binh từ
+                            khắp các bộ lạc.
+                            Với tinh thần đoàn kết và ý chí bảo vệ quê hương, ông là đồng minh quan trọng trong việc
+                            chống lại các thế lực xâm lược.
                         </p>
                         <div class="character-stats">
                             <div class="character-stat">
@@ -323,9 +345,9 @@
                         <h2 class="character-name">Âu Cơ</h2>
                         <p class="character-title">Mẹ Rồng thiêng liêng của dân tộc Việt</p>
                         <p class="character-description">
-                            Nàng tiên xinh đẹp và nhân từ, được mệnh danh là Mẹ Rồng của dân tộc Việt Nam. 
-                            Với tình mẫu tử thiêng liêng và sức mạnh của tiên giới, Âu Cơ đã sinh ra 100 người con, 
-                            tạo nên nguồn gốc của dân tộc Lạc Việt. Nàng là biểu tượng của tình yêu thương, sự chăm sóc 
+                            Nàng tiên xinh đẹp và nhân từ, được mệnh danh là Mẹ Rồng của dân tộc Việt Nam.
+                            Với tình mẫu tử thiêng liêng và sức mạnh của tiên giới, Âu Cơ đã sinh ra 100 người con,
+                            tạo nên nguồn gốc của dân tộc Lạc Việt. Nàng là biểu tượng của tình yêu thương, sự chăm sóc
                             và nguồn sức mạnh nữ tính bảo vệ con cháu qua các thế hệ.
                         </p>
                         <div class="character-stats">
@@ -374,26 +396,26 @@
                 <h2 class="section-title">Lối Chơi Độc Đáo</h2>
                 <p class="section-subtitle">Trải nghiệm RPG 2D pixel art với chiều sâu</p>
             </div>
-            
+
             <div class="gameplay-features">
                 <div class="feature-card">
                     <div class="feature-icon">🎮</div>
                     <h4>Nhập Vai Sâu</h4>
                     <p>Hóa thân thành nhân vật lịch sử, đưa ra quyết định ảnh hưởng đến câu chuyện</p>
                 </div>
-                
+
                 <div class="feature-card">
                     <div class="feature-icon">🗺️</div>
                     <h4>Thế Giới Rộng Lớn</h4>
                     <p>Khám phá các địa danh lịch sử được tái hiện chân thực qua pixel art</p>
                 </div>
-                
+
                 <div class="feature-card">
                     <div class="feature-icon">⚔️</div>
                     <h4>Chiến Đấu Hấp Dẫn</h4>
                     <p>Hệ thống combat động như Hollow Knight với các kỹ năng độc đáo</p>
                 </div>
-                
+
                 <div class="feature-card">
                     <div class="feature-icon">📚</div>
                     <h4>Giá Trị Giáo Dục</h4>
@@ -447,7 +469,9 @@
             <div class="footer-bottom">
                 <p>&copy; 2025 Việt Sử Trường Ca. Tất cả quyền được bảo lưu.</p>
             </div>
-        </div>    </footer>      <!-- JavaScript Files -->    <script src="js/video-controller.js"></script>
+        </div>
+    </footer> <!-- JavaScript Files -->
+    <script src="js/video-controller.js"></script>
     <script src="js/three-scene.js"></script>
     <script src="js/particles.js"></script>
     <script src="js/image-scroll.js"></script>
@@ -458,4 +482,5 @@
     <script src="js/character-slide.js"></script>
     <script src="js/main.js"></script>
 </body>
+
 </html>

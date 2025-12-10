@@ -65,22 +65,32 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-    border-radius: 15px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(0, 0, 0, 0.4));
+    border: 2px solid rgba(212, 175, 55, 0.3);
 }
 
 .character-slide-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    width: auto;
+    height: auto;
+    max-width: 95%;
+    max-height: 95%;
+    object-fit: contain;
     object-position: center;
-    transition: transform 0.3s ease;
-    filter: brightness(0.9) contrast(1.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    filter: brightness(0.95) contrast(1.1);
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 
 .character-slide-image:hover img {
-    transform: scale(1.05);
-    filter: brightness(1) contrast(1.2);
+    transform: scale(1.03);
+    filter: brightness(1) contrast(1.15);
+    box-shadow: 0 15px 50px rgba(212, 175, 55, 0.3);
 }
 
 /* Character slide info styling */
@@ -142,8 +152,11 @@
 .character-slide-controls {
     position: absolute;
     top: 50%;
+    left: 0;
+    right: 0;
     transform: translateY(-50%);
     z-index: 20;
+    pointer-events: none;
 }
 
 .slide-nav-btn {
@@ -160,6 +173,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    pointer-events: all;
 }
 
 .slide-nav-btn:hover {
@@ -169,11 +183,11 @@
 }
 
 .slide-nav-btn.prev {
-    left: -80px;
+    left: 20px;
 }
 
 .slide-nav-btn.next {
-    right: -80px;
+    right: 20px;
 }
 
 /* Slide indicators */
@@ -214,27 +228,27 @@
         gap: 2rem;
         padding: 2rem 1rem;
     }
-    
+
     .character-slide-container {
         height: auto;
         min-height: auto;
         padding: 0 1rem;
     }
-    
+
     .character-slide-image {
         height: 300px;
     }
-    
+
     .character-stats {
         grid-template-columns: 1fr;
     }
-    
+
     .slide-nav-btn.prev {
         left: 10px;
         top: 20px;
         transform: none;
     }
-    
+
     .slide-nav-btn.next {
         right: 10px;
         top: 20px;

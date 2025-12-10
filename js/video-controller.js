@@ -11,9 +11,9 @@ class VideoController {
         this.videoLoaded = false;
         this.retryCount = 0;
         this.maxRetries = 2;
-        
+
         this.init();
-    }    init() {
+    } init() {
         if (!this.video) {
             this.showFallback();
             return;
@@ -58,9 +58,9 @@ class VideoController {
     setupVideoProperties() {
         // Set video properties for optimal performance
         this.video.muted = true;
-        this.video.loop = false;
+        this.video.loop = true; // Enable continuous looping
         this.video.preload = 'metadata';
-          // Set initial video time
+        // Set initial video time
         this.video.currentTime = this.cycleStartTime;
     }
 
@@ -72,17 +72,16 @@ class VideoController {
         try {
             // Ensure video starts at the correct time
             this.video.currentTime = this.cycleStartTime;
-            
+
             // Start playing the video
             await this.video.play();
             this.isPlaying = true;
-            
+
             // Fade in the video (fade out the overlay)
             this.fadeInVideo();
-            
-            // Monitor video progress
-            this.monitorVideoProgress();
-              } catch (error) {
+
+            console.log('🎬 Video playing continuously');
+        } catch (error) {
             this.handleVideoError();
         }
     }
@@ -90,36 +89,36 @@ class VideoController {
     monitorVideoProgress() {
         const checkProgress = () => {
             if (!this.isPlaying) return;
-            
+
             const currentTime = this.video.currentTime;
-            
+
             // Check if we've reached the end time for this cycle
             if (currentTime >= this.cycleEndTime) {
                 this.endVideoSegment();
                 return;
             }
-            
+
             // Continue monitoring
             requestAnimationFrame(checkProgress);
         };
-        
+
         requestAnimationFrame(checkProgress);
     }
 
     fadeInVideo() {        // Add visible class to video
         this.video.classList.add('visible');
-        
+
         // Fade out the overlay to reveal video
         this.overlay.classList.add('transparent');
         this.overlay.classList.remove('fade-in');
-    }    async endVideoSegment() {
+    } async endVideoSegment() {
         // Pause the video
         this.video.pause();
         this.isPlaying = false;
-        
+
         // Fade out the video (fade in the overlay)
         await this.fadeOutVideo();
-        
+
         // Wait a moment before starting the next cycle
         setTimeout(() => {
             this.startVideoCycle();
@@ -130,16 +129,16 @@ class VideoController {
         return new Promise((resolve) => {            // Fade in the overlay to hide video
             this.overlay.classList.remove('transparent');
             this.overlay.classList.add('fade-in');
-            
+
             // Wait for fade animation to complete
             setTimeout(() => {
                 this.video.classList.remove('visible');
                 resolve();
             }, this.fadeDuration);
         });
-    }    handleVideoError() {
+    } handleVideoError() {
         console.log(`Video loading failed (attempt ${this.retryCount + 1}/${this.maxRetries})`);
-        
+
         if (this.retryCount < this.maxRetries) {
             this.retryCount++;
             setTimeout(() => {
@@ -156,12 +155,12 @@ class VideoController {
         if (this.video) {
             this.video.style.display = 'none';
         }
-        
+
         if (this.fallback) {
             this.fallback.style.opacity = '1';
             this.fallback.classList.remove('hidden');
         }
-        
+
         // Keep overlay for proper visual effect
         this.overlay.classList.remove('transparent');
         this.overlay.classList.add('fade-in');
@@ -220,21 +219,21 @@ document.addEventListener('DOMContentLoaded', () => {
 function optimizeVideoPerformance() {
     const video = document.getElementById('hero-video');
     if (!video) return;
-    
+
     // Set optimal video attributes for web performance
     video.setAttribute('playsinline', '');
     video.setAttribute('webkit-playsinline', '');
-    
+
     // Disable picture-in-picture on supported browsers
     if ('disablePictureInPicture' in video) {
         video.disablePictureInPicture = true;
     }
-    
+
     // Prevent context menu on video
     video.addEventListener('contextmenu', (e) => {
         e.preventDefault();
     });
-    
+
     // Prevent video controls
     video.controls = false;
 }
