@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Check Image Size</title>
+</head>
+<body>
+    <img id="img" src="assets/sprites/Run_front.png" style="border: 1px solid red;">
+    <script>
+        const img = document.getElementById('img');
+        img.onload = () => {
+            console.log('Run.png dimensions:', img.naturalWidth, 'x', img.naturalHeight);
+            document.body.innerHTML += `<h1>Run.png: ${img.naturalWidth} x ${img.naturalHeight}</h1>`;
+        };
+    </script>
+</body>
+</html>

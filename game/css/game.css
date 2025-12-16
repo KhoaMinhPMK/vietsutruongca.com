@@ -1,0 +1,17 @@
+/* Screen 1 - Game Canvas Styles */
+#screen-1 {
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#game-canvas {
+    border: 3px solid #8b7355;
+    box-shadow: 
+        0 0 30px rgba(212, 175, 55, 0.3),
+        inset 0 0 20px rgba(0, 0, 0, 0.5);
+    image-rendering: pixelated; /* Keep tiles crisp */
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}

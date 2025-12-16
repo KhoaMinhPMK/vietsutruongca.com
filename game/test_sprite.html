@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Sprite Animation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #2a2a2a;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #d4af37;
+        }
+
+        .controls {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: inline-block;
+            width: 150px;
+            color: #d4af37;
+        }
+
+        input[type="number"],
+        input[type="text"] {
+            width: 200px;
+            padding: 5px 10px;
+            background: #333;
+            border: 1px solid #555;
+            color: #fff;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #d4af37;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background: #f4cf57;
+        }
+
+        .canvas-container {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        canvas {
+            border: 2px solid #d4af37;
+            background: #000;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        .info {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .info p {
+            margin: 5px 0;
+            color: #ccc;
+        }
+
+        .frame-selector {
+            margin-top: 15px;
+        }
+
+        .frame-selector button {
+            padding: 5px 10px;
+            margin: 2px;
+            font-size: 12px;
+        }
+
+        #error {
+            color: #ff4444;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Test Sprite Animation</h1>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Chọn Sprite:</label>
+                <select id="spriteSelect" onchange="onSpriteChange()">
+                    <option value="assets/sprites/player_idle.png|30|50|8">Idle (240x50, 8 frames)</option>
+                    <option value="assets/sprites/Run.png|40|50|8">Run (320x50, 8 frames)</option>
+                    <option value="assets/sprites/run_back.png|25|50|10">Run Back (250x50, 10 frames?)</option>
+                    <option value="assets/sprites/run_back.png|31.25|50|8">Run Back (250x50, 8 frames?)</option>
+                    <option value="assets/sprites/run_front.png|40|60|8">Run Front (320x180, 8 frames, 3 rows?)</option>
+                    <option value="assets/sprites/run_front.png|32|60|10">Run Front (320x180, 10 frames, 3 rows?)</option>
+                    <option value="custom">Custom...</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Đường dẫn Sprite:</label>
+                <input type="text" id="spritePath" value="assets/sprites/player_idle.png">
+            </div>
+
+            <div class="control-group">
+                <label>Chiều rộng Frame:</label>
+                <input type="number" id="frameWidth" value="31.25" step="0.25">
+                <span style="color: #888; margin-left: 10px;">(pixels)</span>
+            </div>
+
+            <div class="control-group">
+                <label>Chiều cao Frame:</label>
+                <input type="number" id="frameHeight" value="50">
+                <span style="color: #888; margin-left: 10px;">(pixels)</span>
+            </div>
+
+            <div class="control-group">
+                <label>Số Frame:</label>
+                <input type="number" id="totalFrames" value="8" min="1" max="20">
+            </div>
+
+            <div class="control-group">
+                <label>Tốc độ (ms):</label>
+                <input type="number" id="frameTime" value="100" min="10" max="1000">
+            </div>
+
+            <div class="control-group">
+                <label>Scale:</label>
+                <input type="number" id="scale" value="2" min="1" max="10">
+            </div>
+
+            <div class="control-group">
+                <label>Offset X (crop trái):</label>
+                <input type="number" id="offsetX" value="0" step="1">
+                <span style="color: #888; margin-left: 10px;">(pixels bỏ qua bên trái)</span>
+            </div>
+
+            <div class="control-group">
+                <label>Offset Y (crop trên):</label>
+                <input type="number" id="offsetY" value="0" step="1">
+                <span style="color: #888; margin-left: 10px;">(pixels bỏ qua bên trên)</span>
+            </div>
+
+            <div class="control-group">
+                <button onclick="loadSprite()">🔄 Load Sprite</button>
+                <button onclick="toggleAnimation()">▶️ Play/Pause</button>
+                <button onclick="resetAnimation()">⏮️ Reset</button>
+            </div>
+
+            <div class="frame-selector">
+                <label>Chọn Frame thủ công:</label>
+                <div id="frameButtons"></div>
+            </div>
+
+            <div id="error"></div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="canvas" width="800" height="400"></canvas>
+        </div>
+
+        <div class="info">
+            <h3 style="color: #d4af37; margin-bottom: 10px;">Thông tin:</h3>
+            <p>Frame hiện tại: <span id="currentFrame">0</span> / <span id="maxFrame">7</span></p>
+            <p>Vị trí sprite: X=<span id="spriteX">0</span>, Y=<span id="spriteY">0</span></p>
+            <p>Offset: X=<span id="infoOffsetX">0</span>, Y=<span id="infoOffsetY">0</span></p>
+            <p>Kích thước sprite gốc: <span id="spriteSize">Chưa load</span></p>
+            <p>Animation: <span id="animStatus">Đang chạy</span></p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let spriteImage = null;
+        let currentFrame = 0;
+        let lastFrameTime = 0;
+        let isPlaying = true;
+        let animationId = null;
+
+        // On sprite selection change
+        function onSpriteChange() {
+            const select = document.getElementById('spriteSelect');
+            const value = select.value;
+            
+            if (value === 'custom') {
+                return;
+            }
+            
+            const parts = value.split('|');
+            document.getElementById('spritePath').value = parts[0];
+            document.getElementById('frameWidth').value = parts[1];
+            document.getElementById('frameHeight').value = parts[2];
+            document.getElementById('totalFrames').value = parts[3];
+            
+            loadSprite();
+        }
+
+        // Load sprite
+        function loadSprite() {
+            const path = document.getElementById('spritePath').value;
+            const error = document.getElementById('error');
+            error.textContent = '';
+
+            spriteImage = new Image();
+            spriteImage.onload = function() {
+                console.log('Sprite loaded:', path);
+                document.getElementById('spriteSize').textContent = `${spriteImage.width}x${spriteImage.height}px`;
+                error.textContent = '';
+                currentFrame = 0;
+                createFrameButtons();
+                if (isPlaying) {
+                    startAnimation();
+                } else {
+                    drawFrame(currentFrame);
+                }
+            };
+            spriteImage.onerror = function() {
+                error.textContent = `❌ Không thể load sprite: ${path}`;
+                console.error('Failed to load:', path);
+            };
+            spriteImage.src = path;
+        }
+
+        // Create frame selection buttons
+        function createFrameButtons() {
+            const totalFrames = parseInt(document.getElementById('totalFrames').value);
+            const container = document.getElementById('frameButtons');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < totalFrames; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.onclick = () => {
+                    currentFrame = i;
+                    isPlaying = false;
+                    drawFrame(currentFrame);
+                    updateInfo();
+                };
+                container.appendChild(btn);
+            }
+        }
+
+        // Draw specific frame
+        function drawFrame(frameIndex) {
+            if (!spriteImage || !spriteImage.complete) return;
+
+            const frameWidth = parseFloat(document.getElementById('frameWidth').value);
+            const frameHeight = parseFloat(document.getElementById('frameHeight').value);
+            const scale = parseInt(document.getElementById('scale').value);
+            const offsetX = parseFloat(document.getElementById('offsetX').value);
+            const offsetY = parseFloat(document.getElementById('offsetY').value);
+
+            // Clear canvas
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Calculate source position with offset
+            const srcX = offsetX + (frameIndex * frameWidth);
+            const srcY = offsetY;
+
+            // Draw centered
+            const drawWidth = frameWidth * scale;
+            const drawHeight = frameHeight * scale;
+            const x = (canvas.width - drawWidth) / 2;
+            const y = (canvas.height - drawHeight) / 2;
+
+            // Draw frame
+            ctx.drawImage(
+                spriteImage,
+                srcX, srcY,
+                frameWidth, frameHeight,
+                x, y,
+                drawWidth, drawHeight
+            );
+
+            // Draw frame border
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x, y, drawWidth, drawHeight);
+
+            // Update info
+            document.getElementById('spriteX').textContent = srcX.toFixed(2);
+            document.getElementById('spriteY').textContent = srcY.toFixed(2);
+            document.getElementById('infoOffsetX').textContent = offsetX.toFixed(2);
+            document.getElementById('infoOffsetY').textContent = offsetX.toFixed(2);
+            document.getElementById('spriteY').textContent = srcY.toFixed(2);
+        }
+
+        // Animation loop
+        function animate(currentTime) {
+            if (!isPlaying) return;
+
+            const frameTime = parseInt(document.getElementById('frameTime').value);
+            const totalFrames = parseInt(document.getElementById('totalFrames').value);
+
+            if (currentTime - lastFrameTime >= frameTime) {
+                currentFrame = (currentFrame + 1) % totalFrames;
+                drawFrame(currentFrame);
+                updateInfo();
+                lastFrameTime = currentTime;
+            }
+
+            animationId = requestAnimationFrame(animate);
+        }
+
+        // Start animation
+        function startAnimation() {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            lastFrameTime = performance.now();
+            animate(lastFrameTime);
+        }
+
+        // Toggle play/pause
+        function toggleAnimation() {
+            isPlaying = !isPlaying;
+            document.getElementById('animStatus').textContent = isPlaying ? 'Đang chạy' : 'Tạm dừng';
+            if (isPlaying) {
+                startAnimation();
+            } else {
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                }
+            }
+        }
+
+        // Reset animation
+        function resetAnimation() {
+            currentFrame = 0;
+            drawFrame(currentFrame);
+            updateInfo();
+        }
+
+        // Update info display
+        function updateInfo() {
+            const totalFrames = parseInt(document.getElementById('totalFrames').value);
+            document.getElementById('currentFrame').textContent = currentFrame;
+            document.getElementById('maxFrame').textContent = totalFrames - 1;
+        }
+
+        // Initialize
+        loadSprite();
+        createFrameButtons();
+    </script>
+</body>
+</html>

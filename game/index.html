@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Game Lịch Sử</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/welcome.css">
+    <link rel="stylesheet" href="css/intro.css">
+    <link rel="stylesheet" href="css/loading.css">
+    <link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="screen active">
+        <!-- Decorative corners -->
+        <div class="welcome-corner top-left"></div>
+        <div class="welcome-corner top-right"></div>
+        <div class="welcome-corner bottom-left"></div>
+        <div class="welcome-corner bottom-right"></div>
+        
+        <div class="welcome-container">
+            <div class="welcome-image-container">
+                <img src="assets/images/bia.png" alt="Game Cover" class="welcome-image">
+            </div>
+            <div class="play-button-container">
+                <h1 class="welcome-title">Lịch Sử</h1>
+                <button id="play-button" class="play-button">Play</button>
+                <p class="press-space-hint">Press Space to Start</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Intro Screen -->
+    <div id="intro-screen" class="screen">
+        <div class="intro-container">
+            <img id="intro-logo" src="assets/images/logo.png" alt="Game Logo" class="intro-logo">
+        </div>
+        <audio id="intro-audio" src="assets/audio/logo.mp3" preload="auto"></audio>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="screen">
+        <div class="loading-backgrounds">
+            <video id="loading-video" class="loading-bg-video" muted preload="auto">
+                <source src="assets/videos/video.mp4" type="video/mp4">
+            </video>
+            <img src="assets/images/bg1.png" alt="Background 1" class="loading-bg-image">
+            <img src="assets/images/bg2.png" alt="Background 2" class="loading-bg-image">
+        </div>
+        <div class="loading-content">
+            <p class="loading-text">Loading</p>
+            <div class="loading-bar-container">
+                <div class="loading-bar-fill"></div>
+            </div>
+            <p class="loading-percentage">0%</p>
+        </div>
+        <audio id="loading-audio" src="assets/audio/sound.mp3" loop preload="auto"></audio>
+    </div>
+
+    <!-- Screen 1 (Main Game) -->
+    <div id="screen-1" class="screen">
+        <!-- Content sẽ được thêm sau theo lệnh của bạn -->
+    </div>
+
+    <!-- Main Game Container (backup) -->
+    <div id="game-container" class="screen">
+        <!-- Game content sẽ được thêm sau -->
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/utils/constants.js"></script>
+    <script src="js/utils/helpers.js"></script>
+    <script src="js/utils/AssetLoader.js"></script>
+    <script src="js/game/Tileset.js"></script>
+    <script src="js/game/Camera.js"></script>
+    <script src="js/game/Map.js"></script>
+    <script src="js/game/SpriteSheet.js"></script>
+    <script src="js/game/Animation.js"></script>
+    <script src="js/game/entities/Player.js"></script>
+    <script src="js/ui/screens/WelcomeScreen.js"></script>
+    <script src="js/ui/screens/IntroScreen.js"></script>
+    <script src="js/ui/screens/LoadingScreen.js"></script>
+    <script src="js/ui/screens/Screen1.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
