@@ -2,6 +2,7 @@
 let welcomeScreen;
 let introScreen;
 let loadingScreen;
+let connectionScreen;
 let screen1;
 let game;
 
@@ -21,6 +22,10 @@ window.addEventListener('DOMContentLoaded', () => {
     loadingScreen = new LoadingScreen();
     window.loadingScreen = loadingScreen;
     
+    // Create connection screen (but don't start yet)
+    connectionScreen = new ConnectionScreen();
+    window.connectionScreen = connectionScreen;
+    
     // Create screen 1 (but don't start yet)
     screen1 = new Screen1();
     window.screen1 = screen1;
@@ -28,7 +33,7 @@ window.addEventListener('DOMContentLoaded', () => {
     console.log('All screens initialized');
     
     // Welcome screen is already visible
-    // Flow: Welcome -> Intro -> Loading -> Screen1 (Map)
+    // Flow: Welcome -> Intro -> Loading -> Connection -> Screen1 (Map)
 });
 
 // Optional: Allow skipping intro with Space key (only during intro)

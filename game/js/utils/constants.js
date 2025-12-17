@@ -10,6 +10,7 @@ const SCREENS = {
     WELCOME: 'welcome-screen',
     INTRO: 'intro-screen',
     LOADING: 'loading-screen',
+    CONNECTION: 'connection-screen',
     SCREEN1: 'screen-1',
     GAME: 'game-container',
 };
