@@ -150,12 +150,34 @@ class LoadingScreen {
      * Transition to main game
      */
     transitionToGame() {
+        // Try to enter fullscreen automatically
+        this.tryAutoFullscreen();
+        
         // Switch to screen 1
         switchScreen(SCREENS.LOADING, SCREENS.SCREEN1);
         
         // Start screen 1 if exists
         if (window.screen1) {
             window.screen1.start();
+        }
+    }
+    
+    /**
+     * Try to enter fullscreen automatically
+     */
+    async tryAutoFullscreen() {
+        try {
+            // Only try on mobile or if screen is small
+            const isMobile = window.innerWidth <= 768 || 
+                           /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile && !document.fullscreenElement) {
+                await document.documentElement.requestFullscreen({ navigationUI: "hide" });
+                console.log('✓ Auto fullscreen enabled');
+            }
+        } catch (error) {
+            // Ignore error - user can manually click fullscreen button
+            console.log('Auto fullscreen not available (user can click button)');
         }
     }
 }
