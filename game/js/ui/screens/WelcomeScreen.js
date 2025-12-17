@@ -30,8 +30,11 @@ class WelcomeScreen {
     /**
      * Handle play button click
      */
-    onPlayClick() {
+    async onPlayClick() {
         console.log('Play button clicked');
+        
+        // Try to enter fullscreen immediately (user gesture)
+        await this.tryEnterFullscreen();
         
         // Hide welcome screen, show intro screen
         switchScreen(SCREENS.WELCOME, SCREENS.INTRO);
@@ -42,6 +45,23 @@ class WelcomeScreen {
             window.introScreen.start();
         } else {
             console.error('IntroScreen not found! window.introScreen is:', window.introScreen);
+        }
+    }
+    
+    /**
+     * Try to enter fullscreen on mobile
+     */
+    async tryEnterFullscreen() {
+        try {
+            const isMobile = window.innerWidth <= 768 || 
+                           /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile && !document.fullscreenElement) {
+                await document.documentElement.requestFullscreen({ navigationUI: "hide" });
+                console.log('✓ Fullscreen enabled on Play click');
+            }
+        } catch (error) {
+            console.log('Fullscreen not available:', error.message);
         }
     }
 

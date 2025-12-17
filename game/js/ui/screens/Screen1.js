@@ -210,7 +210,10 @@ class Screen1 {
                 
                 // Show joystick on mobile
                 const joystick = document.getElementById('joystick-container');
-                if (joystick) joystick.style.display = 'block';
+                if (joystick) {
+                    joystick.style.display = 'block';
+                    joystick.style.zIndex = '2000'; // Ensure on top
+                }
             } else {
                 // Fixed size on desktop (16:9 aspect ratio)
                 const maxWidth = window.innerWidth - 40;
@@ -255,6 +258,12 @@ class Screen1 {
         window.addEventListener('resize', resizeCanvas);
         window.addEventListener('orientationchange', () => {
             setTimeout(resizeCanvas, 100); // Delay for orientation change
+        });
+        
+        // Handle fullscreen changes - resize canvas and show joystick
+        document.addEventListener('fullscreenchange', () => {
+            console.log('Fullscreen changed, resizing...');
+            setTimeout(resizeCanvas, 100); // Resize after fullscreen change
         });
         
         // Handle mobile browser address bar show/hide
