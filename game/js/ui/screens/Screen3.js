@@ -34,6 +34,12 @@ class Screen3 {
         this.runSpriteSheet = null;
         this.runBackSpriteSheet = null;
         this.runFrontSpriteSheet = null;
+        this.enemySpriteSheet = null;
+        
+        // Enemy system
+        this.enemies = [];
+        this.enemySpawnTimer = 0;
+        this.enemySpawnInterval = 600; // 3000/5 = 600ms (spawn 5x faster)
         
         this.animationId = null;
         this.lastTime = 0;
@@ -118,13 +124,21 @@ class Screen3 {
                 PLAYER_CONFIG.RUN_FRONT_START_FRAME || 0
             );
 
+            // Load enemy sprite
+            this.enemySpriteSheet = new SpriteSheet(
+                'assets/sprites/Run kiếm phải.png',
+                30, 50, 8, 6, 0
+            );
+
             await Promise.all([
                 this.idleSpriteSheet.load(),
                 this.runSpriteSheet.load(),
                 this.runBackSpriteSheet.load(),
-                this.runFrontSpriteSheet.load()
+                this.runFrontSpriteSheet.load(),
+                this.enemySpriteSheet.load()
             ]);
             console.log('👤 Player sprites loaded');
+            console.log('⚔️ Enemy sprite loaded');
 
             // Create player at center
             const centerX = (MAP_CONFIG.MAP_WIDTH * MAP_CONFIG.TILE_SIZE) / 2;
@@ -174,6 +188,78 @@ class Screen3 {
         } catch (error) {
             console.error('❌ Error loading Screen3:', error);
         }
+    }
+
+    spawnEnemy() {
+        const mapSize = MAP_CONFIG.MAP_WIDTH * MAP_CONFIG.TILE_SIZE;
+        const margin = 100;
+        
+        // Random position anywhere in map
+        const randomX = Math.random() * (mapSize - 2 * margin) + margin;
+        const randomY = Math.random() * (mapSize - 2 * margin) + margin;
+        
+        // Random direction
+        const spawnFromLeft = Math.random() < 0.5;
+        
+        const enemy = {
+            x: randomX,
+            y: randomY,
+            speed: 2,
+            width: 30,
+            height: 50,
+            direction: spawnFromLeft ? 1 : -1, // 1 = right, -1 = left
+            animation: {
+                currentFrame: 0,
+                frameTime: 100,
+                elapsedTime: 0
+            }
+        };
+        
+        this.enemies.push(enemy);
+        console.log('⚔️ Enemy spawned at:', randomX.toFixed(0), randomY.toFixed(0), spawnFromLeft ? 'RIGHT' : 'LEFT');
+    }
+
+    updateEnemies(deltaTime) {
+        for (let i = this.enemies.length - 1; i >= 0; i--) {
+            const enemy = this.enemies[i];
+            
+            // Move horizontally
+            enemy.x += enemy.speed * enemy.direction;
+            
+            // Animate
+            enemy.animation.elapsedTime += deltaTime;
+            if (enemy.animation.elapsedTime >= enemy.animation.frameTime) {
+                enemy.animation.currentFrame = (enemy.animation.currentFrame + 1) % 8;
+                enemy.animation.elapsedTime = 0;
+            }
+            
+            // Remove if out of map bounds
+            const mapSize = MAP_CONFIG.MAP_WIDTH * MAP_CONFIG.TILE_SIZE;
+            if (enemy.x < -100 || enemy.x > mapSize + 100) {
+                this.enemies.splice(i, 1);
+                console.log('⚔️ Enemy removed (out of bounds)');
+            }
+        }
+    }
+
+    renderEnemies() {
+        if (!this.enemySpriteSheet || !this.camera) return;
+        
+        this.enemies.forEach(enemy => {
+            const screenPos = this.camera.worldToScreen(enemy.x, enemy.y);
+            
+            // Flip sprite if moving left
+            const flipX = enemy.direction === -1;
+            
+            this.enemySpriteSheet.drawFrame(
+                this.ctx,
+                enemy.animation.currentFrame,
+                screenPos.x,
+                screenPos.y,
+                1, // scale (reduced from 2 to 1)
+                flipX
+            );
+        });
     }
 
     async loadMapObjects() {
@@ -312,6 +398,16 @@ class Screen3 {
                 }
             });
         }
+        
+        // Update enemies
+        this.updateEnemies(deltaTime);
+        
+        // Spawn enemies
+        this.enemySpawnTimer += deltaTime;
+        if (this.enemySpawnTimer >= this.enemySpawnInterval) {
+            this.spawnEnemy();
+            this.enemySpawnTimer = 0;
+        }
     }
 
     movePlayerWithCollision(dx, dy) {
@@ -385,6 +481,9 @@ class Screen3 {
                 }
             });
         }
+        
+        // Render enemies
+        this.renderEnemies();
 
         // Render player
         this.player.render(this.ctx, this.camera);
