@@ -1,8 +1,8 @@
 {
   "version": "1.0",
   "mapSize": {
-    "width": 100,
-    "height": 70
+    "width": 250,
+    "height": 180
   },
   "objectCount": 0,
   "objects": []

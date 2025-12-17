@@ -16,9 +16,9 @@ const SCREENS = {
 
 // Map Configuration
 const MAP_CONFIG = {
-    TILE_SIZE: 16,                              // Pixels per tile (giảm xuống 16)
-    MAP_WIDTH: 100,                             // Tiles (width) - 1600px
-    MAP_HEIGHT: 70,                             // Tiles (height) - 1120px
+    TILE_SIZE: 16,                              // Pixels per tile
+    MAP_WIDTH: 250,                             // Tiles (width) - 4000px (tăng từ 100)
+    MAP_HEIGHT: 180,                            // Tiles (height) - 2880px (tăng từ 70)
     CANVAS_WIDTH: 1280,                         // Canvas width in pixels
     CANVAS_HEIGHT: 720,                         // Canvas height in pixels
     TILESET_PATH: 'assets/tilemap/grass.png',   // Path to tileset
