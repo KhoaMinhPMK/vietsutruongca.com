@@ -119,7 +119,13 @@
 
         <div class="controls">
             <div class="control-group">
-                <label>Chọn Sprite:</label>
+                <label>Tải ảnh Sprite Sheet:</label>
+                <input type="file" id="spriteFile" accept="image/*" onchange="onFileSelect()" style="width: 300px; padding: 5px; background: #333; border: 1px solid #555; color: #fff; border-radius: 5px;">
+                <span style="color: #888; margin-left: 10px;">hoặc</span>
+            </div>
+
+            <div class="control-group">
+                <label>Chọn Sprite có sẵn:</label>
                 <select id="spriteSelect" onchange="onSpriteChange()">
                     <option value="assets/sprites/caolo.png|31.25|50|8">Cao Lỗ (250x50, 8 frames)</option>
                     <option value="assets/sprites/player_idle.png|30|50|8">Idle (240x50, 8 frames)</option>
@@ -213,6 +219,36 @@
         let lastFrameTime = 0;
         let isPlaying = true;
         let animationId = null;
+        let uploadedImageUrl = null;
+
+        // Handle file selection
+        function onFileSelect() {
+            const fileInput = document.getElementById('spriteFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                return;
+            }
+
+            // Check if it's an image
+            if (!file.type.startsWith('image/')) {
+                document.getElementById('error').textContent = '❌ Vui lòng chọn file ảnh hợp lệ!';
+                return;
+            }
+
+            // Create object URL from file
+            if (uploadedImageUrl) {
+                URL.revokeObjectURL(uploadedImageUrl);
+            }
+            
+            uploadedImageUrl = URL.createObjectURL(file);
+            
+            // Update sprite path display
+            document.getElementById('spritePath').value = file.name;
+            
+            // Load the uploaded image
+            loadSpriteFromUrl(uploadedImageUrl);
+        }
 
         // On sprite selection change
         function onSpriteChange() {
@@ -232,15 +268,14 @@
             loadSprite();
         }
 
-        // Load sprite
-        function loadSprite() {
-            const path = document.getElementById('spritePath').value;
+        // Load sprite from URL (file or path)
+        function loadSpriteFromUrl(url) {
             const error = document.getElementById('error');
             error.textContent = '';
 
             spriteImage = new Image();
             spriteImage.onload = function() {
-                console.log('Sprite loaded:', path);
+                console.log('Sprite loaded:', url);
                 document.getElementById('spriteSize').textContent = `${spriteImage.width}x${spriteImage.height}px`;
                 error.textContent = '';
                 currentFrame = 0;
@@ -252,10 +287,29 @@
                 }
             };
             spriteImage.onerror = function() {
-                error.textContent = `❌ Không thể load sprite: ${path}`;
-                console.error('Failed to load:', path);
+                error.textContent = `❌ Không thể load sprite: ${url}`;
+                console.error('Failed to load:', url);
             };
-            spriteImage.src = path;
+            spriteImage.src = url;
+        }
+
+        // Load sprite (from path or uploaded file)
+        function loadSprite() {
+            const fileInput = document.getElementById('spriteFile');
+            
+            // If file is uploaded, use it
+            if (fileInput.files && fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                if (uploadedImageUrl) {
+                    URL.revokeObjectURL(uploadedImageUrl);
+                }
+                uploadedImageUrl = URL.createObjectURL(file);
+                loadSpriteFromUrl(uploadedImageUrl);
+            } else {
+                // Otherwise, load from path
+                const path = document.getElementById('spritePath').value;
+                loadSpriteFromUrl(path);
+            }
         }
 
         // Create frame selection buttons
