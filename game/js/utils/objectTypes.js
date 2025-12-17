@@ -52,8 +52,8 @@ const OBJECT_TYPES = {
     tree0: {
         displayName: 'Full Tree',
         category: 'interactive',
-        defaultWidth: 64,
-        defaultHeight: 64,
+        defaultWidth: 128,
+        defaultHeight: 128,
         defaultZIndex: 55,
         collidable: true,
         interactable: true,
@@ -63,8 +63,8 @@ const OBJECT_TYPES = {
     tree1: {
         displayName: 'Chopped Tree',
         category: 'interactive',
-        defaultWidth: 64,
-        defaultHeight: 64,
+        defaultWidth: 128,
+        defaultHeight: 128,
         defaultZIndex: 54,
         collidable: false,
         interactable: false,

@@ -204,6 +204,7 @@ class GameObjectManager {
             return false;
         }
         
+        let treeCount = 0;
         for (const objData of data.objects) {
             let obj;
             // Create appropriate instance based on type
@@ -212,13 +213,14 @@ class GameObjectManager {
             } else if (objData.type === 'tree0' && objData.stumpPath) {
                 // Create InteractiveTree for tree0 objects
                 obj = InteractiveTree.fromJSON(objData);
+                treeCount++;
             } else {
                 obj = GameObject.fromJSON(objData);
             }
             this.add(obj);
         }
         
-        console.log(`Loaded ${this.objects.length} objects from JSON`);
+        console.log(`Loaded ${this.objects.length} objects from JSON (${treeCount} interactive trees)`);
         return true;
     }
     

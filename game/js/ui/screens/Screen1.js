@@ -398,6 +398,7 @@ class Screen1 {
             this.setupMouseControls();
             this.setupKeyboardControls();
             this.setupJoystickControls();
+            this.setupTreeInteraction();
             
             // Setup global console commands for easy NPC spawning
             this.setupConsoleCommands();
@@ -558,6 +559,19 @@ class Screen1 {
             })));
         };
         
+        // Command: checkTrees() - check interactive trees
+        window.checkTrees = () => {
+            const trees = this.objectManager.objects.filter(obj => obj instanceof InteractiveTree);
+            console.log(`Found ${trees.length} InteractiveTree instances`);
+            if (trees.length > 0) {
+                console.log('First tree:', trees[0]);
+                console.log('Player position:', this.player.x, this.player.y);
+                console.log('First tree position:', trees[0].x, trees[0].y);
+                console.log('Distance:', trees[0].getDistanceToPlayer(this.player));
+                console.log('Interaction range:', trees[0].interactionRange);
+            }
+        };
+        
         console.log('%c🎮 Console Commands đã sẵn sàng!', 'color: #00ff00; font-size: 14px; font-weight: bold');
         console.log('%cCách dùng:', 'color: #d4af37; font-weight: bold');
         console.log('  spawn("caolo", 200, 300)          - Spawn NPC Cao Lỗ tại (200, 300)');
@@ -566,6 +580,7 @@ class Screen1 {
         console.log('  house("large", 400, 500)          - Spawn nhà lớn tại (400, 500)');
         console.log('  listNPCs()                        - Xem tất cả objects');
         console.log('  clearNPCs()                       - Xóa tất cả objects');
+        console.log('  checkTrees()                      - Kiểm tra cây interactive');
         console.log('%cVí dụ: Di chuột đến vị trí → xem Mouse: X, Y → gõ lệnh', 'color: #00ff00');
     }
 
@@ -747,10 +762,10 @@ class Screen1 {
             for (const tree of trees) {
                 const screenX = tree.x - this.camera.x;
                 const screenY = tree.y - this.camera.y;
-                const buttonX = screenX + tree.width / 2 - 50;
-                const buttonY = screenY - 40;
-                const buttonWidth = 100;
-                const buttonHeight = 30;
+                const buttonWidth = 120;
+                const buttonHeight = 35;
+                const buttonX = screenX + tree.width / 2 - buttonWidth / 2;
+                const buttonY = screenY - 50;
                 
                 if (x >= buttonX && x <= buttonX + buttonWidth &&
                     y >= buttonY && y <= buttonY + buttonHeight) {

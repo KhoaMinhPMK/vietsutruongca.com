@@ -15,8 +15,8 @@ class InteractiveTree extends GameObject {
         this.chopDuration = 3000; // 3 seconds
         this.isChopping = false;
         
-        // Interaction range
-        this.interactionRange = 80;
+        // Interaction range (increased for larger trees)
+        this.interactionRange = 150;
         
         // UI elements
         this.showButton = false;
@@ -95,7 +95,13 @@ class InteractiveTree extends GameObject {
         }
         
         // Check player proximity
+        const wasShowing = this.showButton;
         this.showButton = this.isPlayerNearby(player);
+        
+        // Debug: Log when button state changes
+        if (this.showButton && !wasShowing) {
+            console.log(`🌲 Tree button showing! Distance: ${Math.floor(this.getDistanceToPlayer(player))}px`);
+        }
         
         // Update chopping progress
         if (this.isChopping && this.buttonPressed) {
@@ -107,11 +113,24 @@ class InteractiveTree extends GameObject {
                 this.isChopping = false;
                 this.collidable = false;
                 this.interactable = false;
+                console.log('🪓 Tree chopped!');
             }
         } else if (this.chopProgress > 0 && this.chopProgress < 1) {
             // Slowly decay progress when not chopping
             this.chopProgress = Math.max(0, this.chopProgress - deltaTime / 1000);
         }
+    }
+    
+    /**
+     * Get distance to player (helper for debugging)
+     * @param {Player} player
+     * @returns {number}
+     */
+    getDistanceToPlayer(player) {
+        if (!player) return Infinity;
+        const dx = (player.x + player.width / 2) - (this.x + this.width / 2);
+        const dy = (player.y + player.height / 2) - (this.y + this.height / 2);
+        return Math.sqrt(dx * dx + dy * dy);
     }
     
     /**
@@ -157,11 +176,11 @@ class InteractiveTree extends GameObject {
         const screenX = this.x - camera.x;
         const screenY = this.y - camera.y;
         
-        // Button position (above tree)
-        const buttonWidth = 100;
-        const buttonHeight = 30;
+        // Button position (above tree) - adjusted for larger tree
+        const buttonWidth = 120;
+        const buttonHeight = 35;
         const buttonX = screenX + this.width / 2 - buttonWidth / 2;
-        const buttonY = screenY - 40;
+        const buttonY = screenY - 50;
         
         // Draw button background
         ctx.fillStyle = this.buttonPressed ? 'rgba(100, 200, 100, 0.9)' : 'rgba(139, 69, 19, 0.9)';
@@ -174,17 +193,17 @@ class InteractiveTree extends GameObject {
         
         // Draw button text
         ctx.fillStyle = '#fff';
-        ctx.font = 'bold 14px Arial';
+        ctx.font = 'bold 16px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('Chặt cây', buttonX + buttonWidth / 2, buttonY + buttonHeight / 2);
         
         // Draw progress bar if chopping
         if (this.chopProgress > 0) {
-            const progressBarWidth = 100;
-            const progressBarHeight = 8;
+            const progressBarWidth = 120;
+            const progressBarHeight = 10;
             const progressBarX = screenX + this.width / 2 - progressBarWidth / 2;
-            const progressBarY = buttonY + buttonHeight + 5;
+            const progressBarY = buttonY + buttonHeight + 8;
             
             // Progress bar background
             ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
@@ -221,6 +240,7 @@ class InteractiveTree extends GameObject {
      * @returns {InteractiveTree}
      */
     static fromJSON(data) {
+        console.log('Creating InteractiveTree from JSON:', data.id);
         const tree = new InteractiveTree(data);
         tree.isChopped = data.isChopped || false;
         tree.chopProgress = data.chopProgress || 0;
