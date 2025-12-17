@@ -453,7 +453,15 @@ class Screen2 {
                     // Check mission complete
                     if (this.killCount >= this.requiredKills) {
                         this.missionComplete = true;
-                        console.log('🎉 Mission Complete!');
+                        console.log('🎉 Mission Complete! Switching to Screen3...');
+                        
+                        // Stop Screen2 and switch to Screen3
+                        setTimeout(() => {
+                            this.stopGame();
+                            if (window.screen3) {
+                                window.screen3.start();
+                            }
+                        }, 1500);
                     }
                     break;
                 }
@@ -534,6 +542,9 @@ class Screen2 {
     
     update(deltaTime) {
         if (!this.player || !this.camera) return;
+        
+        // Stop everything when mission complete or game over
+        if (this.missionComplete || this.gameOver) return;
         
         // Movement input
         let dx = 0;
@@ -898,6 +909,27 @@ class Screen2 {
             this.animationId = requestAnimationFrame(loop);
         };
         loop(this.lastTime);
+    }
+    
+    stopGame() {
+        console.log('⏹️ Stopping Screen2...');
+        
+        // Stop animation loop
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+            this.animationId = null;
+        }
+        
+        // Remove all event listeners
+        document.removeEventListener('keydown', this.boundHandleKeyDown);
+        document.removeEventListener('keyup', this.boundHandleKeyUp);
+        
+        // Clear enemies and projectiles
+        this.enemies = [];
+        this.projectiles = [];
+        this.explosions = [];
+        
+        console.log('✅ Screen2 stopped');
     }
     
     cleanup() {
