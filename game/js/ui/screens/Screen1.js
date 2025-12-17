@@ -108,13 +108,26 @@ class Screen1 {
      * Setup canvas auto-resize for responsive design
      */
     setupCanvasResize() {
+        const updateAppHeight = () => {
+            // Update CSS variable for real viewport height (fixes mobile browser chrome)
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
+        };
+        
         const resizeCanvas = () => {
             const isMobile = window.innerWidth <= 768;
             
+            // Update app height for mobile browsers
+            updateAppHeight();
+            
             if (isMobile) {
-                // Full screen on mobile
+                // Full screen on mobile - use actual viewport height
                 this.canvas.width = window.innerWidth;
                 this.canvas.height = window.innerHeight;
+                
+                // Force canvas to fill screen
+                this.canvas.style.width = `${window.innerWidth}px`;
+                this.canvas.style.height = `${window.innerHeight}px`;
                 
                 // Show joystick on mobile
                 const joystick = document.getElementById('joystick-container');
@@ -135,6 +148,10 @@ class Screen1 {
                 
                 this.canvas.width = width;
                 this.canvas.height = height;
+                
+                // Reset canvas style
+                this.canvas.style.width = '';
+                this.canvas.style.height = '';
                 
                 // Hide joystick on desktop
                 const joystick = document.getElementById('joystick-container');
@@ -159,6 +176,13 @@ class Screen1 {
         window.addEventListener('resize', resizeCanvas);
         window.addEventListener('orientationchange', () => {
             setTimeout(resizeCanvas, 100); // Delay for orientation change
+        });
+        
+        // Handle mobile browser address bar show/hide
+        let resizeTimer;
+        window.addEventListener('scroll', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(resizeCanvas, 100);
         });
     }
 
