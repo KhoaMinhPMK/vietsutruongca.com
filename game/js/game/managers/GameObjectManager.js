@@ -206,9 +206,12 @@ class GameObjectManager {
         
         for (const objData of data.objects) {
             let obj;
-            // Create NPC instances for npc types
+            // Create appropriate instance based on type
             if (objData.type && objData.type.startsWith('npc')) {
                 obj = NPC.fromJSON(objData);
+            } else if (objData.type === 'tree0' && objData.stumpPath) {
+                // Create InteractiveTree for tree0 objects
+                obj = InteractiveTree.fromJSON(objData);
             } else {
                 obj = GameObject.fromJSON(objData);
             }

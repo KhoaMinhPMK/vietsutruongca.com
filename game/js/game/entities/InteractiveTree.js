@@ -1,0 +1,229 @@
+/**
+ * InteractiveTree Class
+ * Manages tree chopping mechanic with hold-to-chop UI
+ */
+class InteractiveTree extends GameObject {
+    /**
+     * @param {Object} config - Tree configuration
+     */
+    constructor(config) {
+        super(config);
+        
+        // Tree state
+        this.isChopped = false;
+        this.chopProgress = 0;
+        this.chopDuration = 3000; // 3 seconds
+        this.isChopping = false;
+        
+        // Interaction range
+        this.interactionRange = 80;
+        
+        // UI elements
+        this.showButton = false;
+        this.buttonPressed = false;
+        
+        // Stump sprite (tree1)
+        this.stumpSprite = null;
+        this.stumpLoaded = false;
+        this.stumpPath = config.stumpPath || '';
+        
+        if (this.stumpPath) {
+            this.loadStumpSprite();
+        }
+    }
+    
+    /**
+     * Load stump sprite
+     */
+    loadStumpSprite() {
+        this.stumpSprite = new Image();
+        this.stumpSprite.onload = () => {
+            this.stumpLoaded = true;
+        };
+        this.stumpSprite.onerror = () => {
+            console.error(`Failed to load stump sprite: ${this.stumpPath}`);
+        };
+        this.stumpSprite.src = this.stumpPath;
+    }
+    
+    /**
+     * Check if player is in interaction range
+     * @param {Player} player
+     * @returns {boolean}
+     */
+    isPlayerNearby(player) {
+        if (!player || this.isChopped) return false;
+        
+        const dx = (player.x + player.width / 2) - (this.x + this.width / 2);
+        const dy = (player.y + player.height / 2) - (this.y + this.height / 2);
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        return distance <= this.interactionRange;
+    }
+    
+    /**
+     * Start chopping
+     */
+    startChopping() {
+        if (this.isChopped) return;
+        this.isChopping = true;
+        this.buttonPressed = true;
+    }
+    
+    /**
+     * Stop chopping
+     */
+    stopChopping() {
+        if (this.isChopped) return;
+        this.isChopping = false;
+        this.buttonPressed = false;
+        // Reset progress if not fully chopped
+        if (this.chopProgress < 1) {
+            this.chopProgress = Math.max(0, this.chopProgress - 0.01);
+        }
+    }
+    
+    /**
+     * Update tree state
+     * @param {number} deltaTime
+     * @param {Player} player
+     */
+    update(deltaTime, player) {
+        if (this.isChopped) {
+            this.showButton = false;
+            return;
+        }
+        
+        // Check player proximity
+        this.showButton = this.isPlayerNearby(player);
+        
+        // Update chopping progress
+        if (this.isChopping && this.buttonPressed) {
+            this.chopProgress += deltaTime / this.chopDuration;
+            
+            if (this.chopProgress >= 1) {
+                this.chopProgress = 1;
+                this.isChopped = true;
+                this.isChopping = false;
+                this.collidable = false;
+                this.interactable = false;
+            }
+        } else if (this.chopProgress > 0 && this.chopProgress < 1) {
+            // Slowly decay progress when not chopping
+            this.chopProgress = Math.max(0, this.chopProgress - deltaTime / 1000);
+        }
+    }
+    
+    /**
+     * Render tree
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {Camera} camera
+     */
+    render(ctx, camera) {
+        const screenX = this.x - camera.x;
+        const screenY = this.y - camera.y;
+        
+        // Render stump first (always)
+        if (this.stumpLoaded && this.stumpSprite) {
+            ctx.drawImage(
+                this.stumpSprite,
+                screenX,
+                screenY,
+                this.width,
+                this.height
+            );
+        }
+        
+        // Render full tree on top if not chopped
+        if (!this.isChopped && this.spriteLoaded && this.sprite) {
+            ctx.drawImage(
+                this.sprite,
+                screenX,
+                screenY,
+                this.width,
+                this.height
+            );
+        }
+    }
+    
+    /**
+     * Render UI elements (button and progress bar)
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {Camera} camera
+     */
+    renderUI(ctx, camera) {
+        if (!this.showButton || this.isChopped) return;
+        
+        const screenX = this.x - camera.x;
+        const screenY = this.y - camera.y;
+        
+        // Button position (above tree)
+        const buttonWidth = 100;
+        const buttonHeight = 30;
+        const buttonX = screenX + this.width / 2 - buttonWidth / 2;
+        const buttonY = screenY - 40;
+        
+        // Draw button background
+        ctx.fillStyle = this.buttonPressed ? 'rgba(100, 200, 100, 0.9)' : 'rgba(139, 69, 19, 0.9)';
+        ctx.fillRect(buttonX, buttonY, buttonWidth, buttonHeight);
+        
+        // Draw button border
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(buttonX, buttonY, buttonWidth, buttonHeight);
+        
+        // Draw button text
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 14px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('Chặt cây', buttonX + buttonWidth / 2, buttonY + buttonHeight / 2);
+        
+        // Draw progress bar if chopping
+        if (this.chopProgress > 0) {
+            const progressBarWidth = 100;
+            const progressBarHeight = 8;
+            const progressBarX = screenX + this.width / 2 - progressBarWidth / 2;
+            const progressBarY = buttonY + buttonHeight + 5;
+            
+            // Progress bar background
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillRect(progressBarX, progressBarY, progressBarWidth, progressBarHeight);
+            
+            // Progress bar fill
+            const fillWidth = progressBarWidth * Math.min(1, this.chopProgress);
+            ctx.fillStyle = '#4CAF50';
+            ctx.fillRect(progressBarX, progressBarY, fillWidth, progressBarHeight);
+            
+            // Progress bar border
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(progressBarX, progressBarY, progressBarWidth, progressBarHeight);
+        }
+    }
+    
+    /**
+     * Convert to JSON
+     * @returns {Object}
+     */
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            stumpPath: this.stumpPath,
+            isChopped: this.isChopped,
+            chopProgress: this.chopProgress
+        };
+    }
+    
+    /**
+     * Create from JSON
+     * @param {Object} data
+     * @returns {InteractiveTree}
+     */
+    static fromJSON(data) {
+        const tree = new InteractiveTree(data);
+        tree.isChopped = data.isChopped || false;
+        tree.chopProgress = data.chopProgress || 0;
+        return tree;
+    }
+}

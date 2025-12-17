@@ -722,6 +722,77 @@ class Screen1 {
             handleEnd();
         });
     }
+    
+    /**
+     * Setup tree interaction (chop mechanic)
+     */
+    setupTreeInteraction() {
+        let activeTree = null;
+        
+        const startChopping = (x, y) => {
+            if (!this.objectManager || !this.camera) return;
+            
+            // Convert screen to world coordinates
+            const worldX = this.camera.x + x;
+            const worldY = this.camera.y + y;
+            
+            // Find trees at this position
+            const trees = this.objectManager.objects.filter(obj => 
+                obj instanceof InteractiveTree && 
+                obj.showButton && 
+                !obj.isChopped
+            );
+            
+            // Check if click is on any tree's button
+            for (const tree of trees) {
+                const screenX = tree.x - this.camera.x;
+                const screenY = tree.y - this.camera.y;
+                const buttonX = screenX + tree.width / 2 - 50;
+                const buttonY = screenY - 40;
+                const buttonWidth = 100;
+                const buttonHeight = 30;
+                
+                if (x >= buttonX && x <= buttonX + buttonWidth &&
+                    y >= buttonY && y <= buttonY + buttonHeight) {
+                    activeTree = tree;
+                    tree.startChopping();
+                    break;
+                }
+            }
+        };
+        
+        const stopChopping = () => {
+            if (activeTree) {
+                activeTree.stopChopping();
+                activeTree = null;
+            }
+        };
+        
+        // Mouse events
+        this.canvas.addEventListener('mousedown', (e) => {
+            const rect = this.canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            startChopping(x, y);
+        });
+        
+        window.addEventListener('mouseup', () => {
+            stopChopping();
+        });
+        
+        // Touch events
+        this.canvas.addEventListener('touchstart', (e) => {
+            const rect = this.canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            startChopping(x, y);
+        });
+        
+        this.canvas.addEventListener('touchend', () => {
+            stopChopping();
+        });
+    }
 
     /**
      * Start render loop
@@ -830,12 +901,16 @@ class Screen1 {
             this.movePlayerWithCollision(dx, dy);
             this.player.update(deltaTime, 0, 0); // Update animation only, no map bounds
             
-            // Update NPCs animations
+            // Update NPCs animations and Interactive Trees
             if (this.objectManager && this.objectManager.objects) {
                 for (const obj of this.objectManager.objects) {
                     // Update NPC animations
                     if (obj instanceof NPC) {
                         obj.update(deltaTime);
+                    }
+                    // Update InteractiveTree (chopping progress, etc.)
+                    else if (obj instanceof InteractiveTree) {
+                        obj.update(deltaTime, this.player);
                     }
                 }
             }
@@ -901,6 +976,15 @@ class Screen1 {
             // Render objects in front of player
             objectsInFront.forEach(obj => obj.render(this.ctx, this.camera));
             
+            this.ctx.restore();
+            
+            // Render InteractiveTree UI (buttons and progress bars) on top
+            this.ctx.save();
+            this.objectManager.objects.forEach(obj => {
+                if (obj instanceof InteractiveTree) {
+                    obj.renderUI(this.ctx, this.camera);
+                }
+            });
             this.ctx.restore();
         } else {
             // No objects, just render player

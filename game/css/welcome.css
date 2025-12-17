@@ -277,3 +277,83 @@
         right: 15px;
     }
 }
+
+/* Landscape mode (mobile horizontal) */
+@media (max-height: 500px) {
+    .welcome-container {
+        gap: 20px;
+        padding: 10px;
+    }
+    
+    .welcome-image-container {
+        max-width: 40%;
+        max-height: 65%;
+        padding: 10px;
+    }
+    
+    .welcome-title {
+        font-size: 24px;
+        letter-spacing: 3px;
+        margin-bottom: 5px;
+    }
+    
+    .play-button {
+        padding: 12px 40px;
+        font-size: 20px;
+        letter-spacing: 3px;
+    }
+    
+    .welcome-corner {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .welcome-corner.top-left,
+    .welcome-corner.top-right {
+        top: 10px;
+    }
+    
+    .welcome-corner.bottom-left,
+    .welcome-corner.bottom-right {
+        bottom: 10px;
+    }
+    
+    .welcome-corner.top-left,
+    .welcome-corner.bottom-left {
+        left: 10px;
+    }
+    
+    .welcome-corner.top-right,
+    .welcome-corner.bottom-right {
+        right: 10px;
+    }
+}
+
+/* Very small landscape screens */
+@media (max-height: 400px) {
+    .welcome-container {
+        gap: 10px;
+        flex-direction: row;
+    }
+    
+    .welcome-image-container {
+        max-width: 35%;
+        max-height: 80%;
+        padding: 5px;
+    }
+    
+    .play-button-container {
+        gap: 10px;
+    }
+    
+    .welcome-title {
+        font-size: 20px;
+        letter-spacing: 2px;
+    }
+    
+    .play-button {
+        padding: 10px 30px;
+        font-size: 18px;
+        letter-spacing: 2px;
+    }
+}

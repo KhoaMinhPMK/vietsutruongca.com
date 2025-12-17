@@ -49,6 +49,28 @@ const OBJECT_TYPES = {
         description: 'A tree'
     },
     
+    tree0: {
+        displayName: 'Full Tree',
+        category: 'interactive',
+        defaultWidth: 64,
+        defaultHeight: 64,
+        defaultZIndex: 55,
+        collidable: true,
+        interactable: true,
+        description: 'A full tree that can be chopped'
+    },
+    
+    tree1: {
+        displayName: 'Chopped Tree',
+        category: 'interactive',
+        defaultWidth: 64,
+        defaultHeight: 64,
+        defaultZIndex: 54,
+        collidable: false,
+        interactable: false,
+        description: 'A chopped tree stump'
+    },
+    
     tree_small: {
         displayName: 'Small Tree',
         category: 'nature',
