@@ -18,6 +18,13 @@ class Screen1 {
         // Game objects from editor
         this.objectManager = null;
         
+        // Resource management
+        this.resourceManager = new ResourceManager();
+        this.resourceBar = new ResourceBar(this.resourceManager);
+        
+        // Dialog system
+        this.dialogPanel = new DialogPanel();
+        
         // Keyboard state
         this.keys = {};
         
@@ -31,6 +38,9 @@ class Screen1 {
             deltaX: 0,
             deltaY: 0
         };
+        
+        // Debug panel state
+        this.showDebugPanel = false;
         
         this.setupCanvas();
     }
@@ -117,11 +127,37 @@ class Screen1 {
             " title="Full màn hình">
                 ⛶
             </button>
+            
+            <!-- Debug Button -->
+            <button id="debug-btn" style="
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                width: 50px;
+                height: 50px;
+                background: rgba(0, 0, 0, 0.8);
+                border: 2px solid #666;
+                border-radius: 10px;
+                color: #fff;
+                font-size: 28px;
+                cursor: pointer;
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            " title="Debug Panel">
+                🪲
+            </button>
         `;
         this.screen.insertAdjacentHTML('beforeend', joystickHTML);
         
         // Setup fullscreen button
         this.setupFullscreenButton();
+        
+        // Setup debug button
+        this.setupDebugButton();
         
         // Auto-resize canvas for mobile/desktop
         this.setupCanvasResize();
@@ -180,6 +216,31 @@ class Screen1 {
             if (!document.fullscreenElement) {
                 btn.style.background = 'rgba(0, 0, 0, 0.7)';
             }
+        });
+    }
+
+    /**
+     * Setup debug button
+     */
+    setupDebugButton() {
+        const btn = document.getElementById('debug-btn');
+        if (!btn) return;
+        
+        // Toggle debug panel
+        btn.addEventListener('click', () => {
+            this.showDebugPanel = !this.showDebugPanel;
+            console.log('🪲 Debug panel:', this.showDebugPanel ? 'OPENED' : 'CLOSED');
+        });
+        
+        // Hover effects
+        btn.addEventListener('mouseenter', () => {
+            btn.style.transform = 'scale(1.1)';
+            btn.style.background = 'rgba(100, 100, 100, 0.8)';
+        });
+        
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = 'scale(1)';
+            btn.style.background = 'rgba(0, 0, 0, 0.8)';
         });
     }
 
@@ -376,20 +437,8 @@ class Screen1 {
             console.log('Map loaded successfully!');
             
             // ===== SPAWN NPCs TỪ CODE (Tùy chọn) =====
-            // Comment dòng loadMapObjects() ở trên và dùng code dưới đây
-            // để spawn NPCs trực tiếp từ code thay vì dùng map_data.json
-            /*
-            this.spawnNPC('npc_caolo', 100, 100, 'sprites/caolo.png', {
-                name: 'Cao Lỗ số 1'
-            });
-            
-            // Hoặc spawn nhiều NPCs cùng lúc:
-            this.spawnNPCs([
-                { type: 'npc_caolo', x: 200, y: 150, sprite: 'sprites/caolo.png' },
-                { type: 'npc_caolo', x: 300, y: 200, sprite: 'sprites/caolo.png' },
-                { type: 'npc_caolo', x: 400, y: 250, sprite: 'sprites/caolo.png' }
-            ]);
-            */
+            // Spawn random 1-3 Cao Lỗ NPCs at random positions
+            this.spawnRandomCaoLo();
             
             // Start render loop
             this.startRenderLoop();
@@ -399,6 +448,7 @@ class Screen1 {
             this.setupKeyboardControls();
             this.setupJoystickControls();
             this.setupTreeInteraction();
+            this.setupNPCInteraction(); // Now includes gate interaction
             
             // Setup global console commands for easy NPC spawning
             this.setupConsoleCommands();
@@ -421,6 +471,14 @@ class Screen1 {
             const mapData = await response.json();
             this.objectManager.loadFromJSON(mapData);
             console.log(`✓ Loaded ${this.objectManager.objects.length} objects from map_data.json`);
+            
+            // Pass resourceManager to all InteractiveTree objects
+            this.objectManager.objects.forEach(obj => {
+                if (obj instanceof InteractiveTree) {
+                    obj.resourceManager = this.resourceManager;
+                }
+            });
+            console.log('✓ ResourceManager linked to all interactive trees');
         } catch (error) {
             console.warn('Could not load map objects:', error.message);
         }
@@ -451,13 +509,14 @@ class Screen1 {
                 animation: options.animation || {
                     frameCount: 8,
                     frameTime: 100
-                }
+                },
+                dialogs: options.dialogs || null
             }
         };
         
         const npc = NPC.fromJSON(npcData);
         this.objectManager.add(npc);
-        console.log(`✓ Spawned ${npcType} at (${x}, ${y})`);
+        console.log(`✓ Spawned ${npcType} at (${x}, ${y})`, options.dialogs ? `with ${options.dialogs.length} dialogs` : '');
         return npc;
     }
 
@@ -476,6 +535,67 @@ class Screen1 {
             );
         }
         console.log(`✓ Spawned ${npcList.length} NPCs`);
+    }
+
+    /**
+     * Spawn random 1-3 Cao Lỗ NPCs at random positions
+     */
+    spawnRandomCaoLo() {
+        // Random number of NPCs (1-3)
+        const count = Math.floor(Math.random() * 3) + 1;
+        
+        // Player spawn position (center of map)
+        const playerX = (MAP_CONFIG.MAP_WIDTH * MAP_CONFIG.TILE_SIZE) / 2;
+        const playerY = (MAP_CONFIG.MAP_HEIGHT * MAP_CONFIG.TILE_SIZE) / 2;
+        
+        // Spawn around player position (radius 200-500 pixels)
+        const minRadius = 200;
+        const maxRadius = 500;
+        
+        console.log(`🎲 Spawning ${count} random Cao Lỗ NPC(s) near player...`);
+        
+        for (let i = 0; i < count; i++) {
+            // Random angle and distance
+            const angle = Math.random() * Math.PI * 2;
+            const distance = Math.random() * (maxRadius - minRadius) + minRadius;
+            
+            // Calculate position
+            const x = Math.floor(playerX + Math.cos(angle) * distance);
+            const y = Math.floor(playerY + Math.sin(angle) * distance);
+            
+            this.spawnNPC('npc_caolo', x, y, 'assets/sprites/caolo.png', {
+                name: `Cao Lỗ ${i + 1}`,
+                width: 31,
+                height: 48,
+                dialogs: [
+                    { speaker: 'player', text: 'Xin chào, ta phải làm gì đây?' },
+                    { speaker: 'caolo', text: 'Xin chào! Ta là Cao Lỗ, người canh giữ khu vực này.' },
+                    { speaker: 'caolo', text: 'Tình hình đang rất nguy cấp! Ngươi cần thu thập tài nguyên.' },
+                    { speaker: 'caolo', text: 'Hãy chặt cây để lấy gỗ. Khi có đủ 2 cây gỗ...' },
+                    { speaker: 'caolo', text: 'Hãy tìm Cổng Thời Gian gần đây để qua màn tiếp theo!' },
+                    { speaker: 'player', text: 'Ta hiểu rồi. 2 cây gỗ và tìm cổng!' }
+                ]
+            });
+            
+            console.log(`  ✓ Spawned Cao Lỗ ${i + 1} at (${x}, ${y}) - ${Math.floor(distance)}px from player`);
+        }
+        
+        // Spawn 1 gate RIGHT AT PLAYER POSITION for testing
+        const gateX = Math.floor(playerX + 50); // 50px to the right of player
+        const gateY = Math.floor(playerY);
+        
+        this.gate = new InteractiveGate(gateX, gateY, 'assets/sprites/Dimensional_Portal.png');
+        this.gate.resourceManager = this.resourceManager;
+        
+        console.log(`🚪 Creating gate at (${gateX}, ${gateY}) RIGHT NEXT TO PLAYER`);
+        console.log(`   Gate size: ${this.gate.width}x${this.gate.height}, zIndex: ${this.gate.zIndex}`);
+        console.log(`   Gate sprite: ${this.gate.spritePath}`);
+        console.log(`   Gate position: x=${this.gate.x}, y=${this.gate.y}`);
+        
+        if (this.objectManager && this.objectManager.objects) {
+            this.objectManager.objects.push(this.gate);
+            console.log(`   ✅ Gate added to objectManager.objects (total: ${this.objectManager.objects.length})`);
+        }
     }
 
     /**
@@ -565,7 +685,9 @@ class Screen1 {
             console.log(`Found ${trees.length} InteractiveTree instances`);
             if (trees.length > 0) {
                 console.log('First tree:', trees[0]);
+                console.log('Player:', this.player);
                 console.log('Player position:', this.player.x, this.player.y);
+                console.log('Player width/height:', this.player.width, this.player.height);
                 console.log('First tree position:', trees[0].x, trees[0].y);
                 console.log('Distance:', trees[0].getDistanceToPlayer(this.player));
                 console.log('Interaction range:', trees[0].interactionRange);
@@ -592,6 +714,11 @@ class Screen1 {
         let lastY = 0;
 
         this.canvas.addEventListener('mousedown', (e) => {
+            // Check if clicking on tree button first
+            if (this.isClickingTreeButton(e)) {
+                return; // Don't start camera drag
+            }
+            
             isDragging = true;
             lastX = e.clientX;
             lastY = e.clientY;
@@ -633,6 +760,51 @@ class Screen1 {
         });
 
         this.canvas.style.cursor = 'grab';
+    }
+    
+
+    /**
+     * Check if mouse event is clicking on a tree button
+     * @param {MouseEvent} e
+     * @returns {boolean}
+     */
+    isClickingTreeButton(e) {
+        if (!this.objectManager || !this.camera) return false;
+        
+        const rect = this.canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        // Find trees with visible buttons
+        const trees = this.objectManager.objects.filter(obj => 
+            obj instanceof InteractiveTree && 
+            obj.showButton && 
+            !obj.isChopped
+        );
+        
+        // Check if click is on any tree's button (with padding)
+        for (const tree of trees) {
+            const screenX = tree.x - this.camera.x;
+            const screenY = tree.y - this.camera.y;
+            const buttonWidth = 160;
+            const buttonHeight = 50;
+            const buttonX = screenX + tree.width / 2 - buttonWidth / 2;
+            const buttonY = screenY - 60;
+            
+            // Add 30px padding for easier clicking
+            const clickPadding = 30;
+            const hitX = buttonX - clickPadding;
+            const hitY = buttonY - clickPadding;
+            const hitWidth = buttonWidth + clickPadding * 2;
+            const hitHeight = buttonHeight + clickPadding * 2;
+            
+            if (x >= hitX && x <= hitX + hitWidth &&
+                y >= hitY && y <= hitY + hitHeight) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     /**
@@ -745,11 +917,7 @@ class Screen1 {
         let activeTree = null;
         
         const startChopping = (x, y) => {
-            if (!this.objectManager || !this.camera) return;
-            
-            // Convert screen to world coordinates
-            const worldX = this.camera.x + x;
-            const worldY = this.camera.y + y;
+            if (!this.objectManager || !this.camera) return false;
             
             // Find trees at this position
             const trees = this.objectManager.objects.filter(obj => 
@@ -758,38 +926,58 @@ class Screen1 {
                 !obj.isChopped
             );
             
-            // Check if click is on any tree's button
+            console.log(`🔍 Checking ${trees.length} trees with buttons visible`);
+            
+            // Check if click is on any tree's button (with padding for easier clicking)
             for (const tree of trees) {
                 const screenX = tree.x - this.camera.x;
                 const screenY = tree.y - this.camera.y;
-                const buttonWidth = 120;
-                const buttonHeight = 35;
+                const buttonWidth = 160;
+                const buttonHeight = 50;
                 const buttonX = screenX + tree.width / 2 - buttonWidth / 2;
-                const buttonY = screenY - 50;
+                const buttonY = screenY - 60;
                 
-                if (x >= buttonX && x <= buttonX + buttonWidth &&
-                    y >= buttonY && y <= buttonY + buttonHeight) {
+                // Add 30px padding around button for easier clicking
+                const clickPadding = 30;
+                const hitX = buttonX - clickPadding;
+                const hitY = buttonY - clickPadding;
+                const hitWidth = buttonWidth + clickPadding * 2;
+                const hitHeight = buttonHeight + clickPadding * 2;
+                
+                console.log(`Tree button at (${buttonX}, ${buttonY}) size ${buttonWidth}x${buttonHeight}, HIT AREA: (${hitX}, ${hitY}) to (${hitX + hitWidth}, ${hitY + hitHeight}), click at (${x}, ${y})`);
+                
+                if (x >= hitX && x <= hitX + hitWidth &&
+                    y >= hitY && y <= hitY + hitHeight) {
                     activeTree = tree;
                     tree.startChopping();
-                    break;
+                    console.log('✅ Started chopping tree!');
+                    return true; // Clicked on button
                 }
             }
+            
+            return false; // Did not click on button
         };
         
         const stopChopping = () => {
             if (activeTree) {
                 activeTree.stopChopping();
+                console.log('⏹️ Stopped chopping');
                 activeTree = null;
             }
         };
         
-        // Mouse events
+        // Mouse events - high priority (capture phase)
         this.canvas.addEventListener('mousedown', (e) => {
             const rect = this.canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-            startChopping(x, y);
-        });
+            
+            // Check tree interaction
+            if (startChopping(x, y)) {
+                e.stopPropagation(); // Stop event from reaching camera controls
+                e.preventDefault();
+            }
+        }, true); // Use capture phase
         
         window.addEventListener('mouseup', () => {
             stopChopping();
@@ -801,12 +989,174 @@ class Screen1 {
             const touch = e.touches[0];
             const x = touch.clientX - rect.left;
             const y = touch.clientY - rect.top;
-            startChopping(x, y);
-        });
+            
+            if (startChopping(x, y)) {
+                e.stopPropagation();
+                e.preventDefault();
+            }
+        }, true);
         
         this.canvas.addEventListener('touchend', () => {
             stopChopping();
         });
+    }
+
+    /**
+     * Transition to Screen2
+     */
+    transitionToScreen2() {
+        console.log('🌀 Transition started...');
+        
+        // Hide Screen1 canvas
+        const canvas = document.getElementById('gameCanvas');
+        if (canvas) {
+            canvas.style.display = 'none';
+        }
+        
+        // Clean up Screen1
+        this.cleanup();
+        
+        // Show Screen2
+        if (window.screen2) {
+            window.screen2.init();
+            window.screen2.startRenderLoop();
+            console.log('✅ Screen2 activated');
+        }
+    }
+
+    /**
+     * Setup NPC interaction (dialog)
+     */
+    setupNPCInteraction() {
+        const openDialog = (x, y) => {
+            if (!this.objectManager || !this.camera || !this.player) return false;
+            
+            // Check dialog không đang mở
+            if (this.dialogPanel.isOpen()) return false;
+            
+            // Find NPCs near player
+            const playerSize = this.player.getSize();
+            const playerCenterX = this.player.x + playerSize.width / 2;
+            const playerCenterY = this.player.y + playerSize.height / 2;
+            
+            const npcs = this.objectManager.objects.filter(obj => obj instanceof NPC);
+            
+            for (const npc of npcs) {
+                // Check distance to NPC
+                const npcCenterX = npc.x + npc.width / 2;
+                const npcCenterY = npc.y + npc.height / 2;
+                const distance = Math.sqrt(
+                    Math.pow(playerCenterX - npcCenterX, 2) +
+                    Math.pow(playerCenterY - npcCenterY, 2)
+                );
+                
+                // If player is near (150px) and has dialogs
+                if (distance < 150 && npc.metadata && npc.metadata.dialogs) {
+                    // Check if clicking on interact button
+                    const screenX = npc.x - this.camera.x;
+                    const screenY = npc.y - this.camera.y;
+                    const buttonWidth = 140;
+                    const buttonHeight = 40;
+                    const buttonX = screenX + npc.width / 2 - buttonWidth / 2;
+                    const buttonY = screenY - 50;
+                    
+                    // Hit area with padding
+                    const hitPadding = 20;
+                    if (x >= buttonX - hitPadding && x <= buttonX + buttonWidth + hitPadding &&
+                        y >= buttonY - hitPadding && y <= buttonY + buttonHeight + hitPadding) {
+                        // Open dialog
+                        this.dialogPanel.open(npc.metadata.name || 'NPC', npc.metadata.dialogs);
+                        return true;
+                    }
+                }
+            }
+            
+            return false;
+        };
+        
+        const openGate = (x, y) => {
+            if (!this.gate || !this.camera) return false;
+            
+            // Check if gate button is showing and player has enough wood
+            if (!this.gate.showButton || !this.gate.hasEnoughWood()) return false;
+            
+            const screenX = this.gate.x - this.camera.x;
+            const screenY = this.gate.y - this.camera.y;
+            
+            const buttonWidth = 160;
+            const buttonHeight = 45;
+            const buttonX = screenX + this.gate.width / 2 - buttonWidth / 2;
+            const buttonY = screenY - 55;
+            
+            // Hit area with padding
+            const hitPadding = 20;
+            
+            console.log(`🖱️ Gate click check: (${x.toFixed(1)}, ${y.toFixed(1)})`);
+            console.log(`   Button area: x=${(buttonX - hitPadding).toFixed(1)} to ${(buttonX + buttonWidth + hitPadding).toFixed(1)}, y=${(buttonY - hitPadding).toFixed(1)} to ${(buttonY + buttonHeight + hitPadding).toFixed(1)}`);
+            
+            if (x >= buttonX - hitPadding && x <= buttonX + buttonWidth + hitPadding &&
+                y >= buttonY - hitPadding && y <= buttonY + buttonHeight + hitPadding) {
+                console.log('✅ GATE ACTIVATED! Transitioning to Screen2...');
+                this.transitionToScreen2();
+                return true;
+            }
+            
+            return false;
+        };
+        
+        // Mouse events
+        this.canvas.addEventListener('mousedown', (e) => {
+            // Priority 1: Check dialog next button
+            if (this.dialogPanel.isOpen()) {
+                const rect = this.canvas.getBoundingClientRect();
+                const scaleX = this.canvas.width / rect.width;
+                const scaleY = this.canvas.height / rect.height;
+                const x = (e.clientX - rect.left) * scaleX;
+                const y = (e.clientY - rect.top) * scaleY;
+                
+                console.log('🖱️ Dialog click:', { 
+                    clientX: e.clientX, 
+                    clientY: e.clientY, 
+                    canvasX: x, 
+                    canvasY: y,
+                    scale: { scaleX, scaleY }
+                });
+                
+                if (this.dialogPanel.isClickOnNextButton(x, y)) {
+                    this.dialogPanel.next();
+                    e.stopPropagation();
+                    e.preventDefault();
+                    return;
+                }
+            }
+            
+            // Priority 2: Check gate button (if gate exists and dialog is closed)
+            if (!this.dialogPanel.isOpen()) {
+                const rect = this.canvas.getBoundingClientRect();
+                const scaleX = this.canvas.width / rect.width;
+                const scaleY = this.canvas.height / rect.height;
+                const x = (e.clientX - rect.left) * scaleX;
+                const y = (e.clientY - rect.top) * scaleY;
+                
+                if (openGate(x, y)) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    return;
+                }
+            }
+            
+            // Priority 3: Check NPC interaction
+            const rect = this.canvas.getBoundingClientRect();
+            const scaleX = this.canvas.width / rect.width;
+            const scaleY = this.canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+            
+            if (openDialog(x, y)) {
+                e.stopPropagation();
+                e.preventDefault();
+            }
+        }, true);
     }
 
     /**
@@ -927,6 +1277,10 @@ class Screen1 {
                     else if (obj instanceof InteractiveTree) {
                         obj.update(deltaTime, this.player);
                     }
+                    // Update InteractiveGate (animation and interaction)
+                    else if (obj instanceof InteractiveGate) {
+                        obj.update(deltaTime, this.player);
+                    }
                 }
             }
             
@@ -1001,6 +1355,20 @@ class Screen1 {
                 }
             });
             this.ctx.restore();
+            
+            // Render NPC interaction UI (dialog buttons) on top
+            if (!this.dialogPanel.isOpen()) {
+                this.ctx.save();
+                this.renderNPCInteractionUI();
+                this.ctx.restore();
+                
+                // Render gate interaction UI
+                if (this.gate) {
+                    this.ctx.save();
+                    this.gate.renderUI(this.ctx, this.camera);
+                    this.ctx.restore();
+                }
+            }
         } else {
             // No objects, just render player
             if (this.player && this.camera) {
@@ -1008,31 +1376,113 @@ class Screen1 {
             }
         }
 
-        // Draw info text
-        this.drawDebugInfo();
+        // Draw resource bar (always on top)
+        if (this.resourceBar) {
+            this.resourceBar.render(this.ctx, this.canvas.width);
+        }
+
+        // Draw debug panel if enabled (on top of resource bar)
+        if (this.showDebugPanel) {
+            this.drawDebugPanel();
+        }
+        
+        // Draw dialog panel (topmost layer)
+        if (this.dialogPanel) {
+            this.dialogPanel.render(this.ctx, this.canvas.width, this.canvas.height);
+        }
     }
 
     /**
-     * Draw debug information
+     * Render NPC interaction UI (buttons)
      */
-    drawDebugInfo() {
-        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-        this.ctx.fillRect(10, 10, 350, 150);
+    renderNPCInteractionUI() {
+        if (!this.objectManager || !this.player) return;
         
+        const playerSize = this.player.getSize();
+        const playerCenterX = this.player.x + playerSize.width / 2;
+        const playerCenterY = this.player.y + playerSize.height / 2;
+        
+        const npcs = this.objectManager.objects.filter(obj => obj instanceof NPC);
+        
+        for (const npc of npcs) {
+            // Check if NPC has dialogs
+            if (!npc.metadata || !npc.metadata.dialogs) continue;
+            
+            // Check distance to player
+            const npcCenterX = npc.x + npc.width / 2;
+            const npcCenterY = npc.y + npc.height / 2;
+            const distance = Math.sqrt(
+                Math.pow(playerCenterX - npcCenterX, 2) +
+                Math.pow(playerCenterY - npcCenterY, 2)
+            );
+            
+            // Show button if player is near
+            if (distance < 150) {
+                const screenX = npc.x - this.camera.x;
+                const screenY = npc.y - this.camera.y;
+                const buttonWidth = 140;
+                const buttonHeight = 40;
+                const buttonX = screenX + npc.width / 2 - buttonWidth / 2;
+                const buttonY = screenY - 50;
+                
+                // Button background
+                const gradient = this.ctx.createLinearGradient(buttonX, buttonY, buttonX, buttonY + buttonHeight);
+                gradient.addColorStop(0, 'rgba(100, 200, 100, 0.9)');
+                gradient.addColorStop(1, 'rgba(50, 150, 50, 0.9)');
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(buttonX, buttonY, buttonWidth, buttonHeight);
+                
+                // Button border
+                this.ctx.strokeStyle = '#fff';
+                this.ctx.lineWidth = 2;
+                this.ctx.strokeRect(buttonX, buttonY, buttonWidth, buttonHeight);
+                
+                // Button text
+                this.ctx.fillStyle = '#fff';
+                this.ctx.font = 'bold 16px Arial';
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillText('💬 Trò chuyện', buttonX + buttonWidth / 2, buttonY + buttonHeight / 2);
+            }
+        }
+    }
+
+    /**
+     * Draw debug information panel
+     */
+    drawDebugPanel() {
+        const panelWidth = 380;
+        const panelHeight = 180;
+        const panelX = 10;
+        const panelY = 70; // Move down to avoid overlapping with debug button
+        
+        // Panel background
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.85)';
+        this.ctx.fillRect(panelX, panelY, panelWidth, panelHeight);
+        
+        // Panel border
+        this.ctx.strokeStyle = '#d4af37';
+        this.ctx.lineWidth = 2;
+        this.ctx.strokeRect(panelX, panelY, panelWidth, panelHeight);
+        
+        // Debug info text
         this.ctx.fillStyle = '#d4af37';
         this.ctx.font = '16px monospace';
-        this.ctx.fillText(`Map: ${MAP_CONFIG.MAP_WIDTH}x${MAP_CONFIG.MAP_HEIGHT} tiles`, 20, 30);
-        this.ctx.fillText(`Camera: ${Math.round(this.camera.x)}, ${Math.round(this.camera.y)}`, 20, 55);
+        this.ctx.textAlign = 'left';
+        this.ctx.textBaseline = 'alphabetic';
+        
+        this.ctx.fillText(`Map: ${MAP_CONFIG.MAP_WIDTH}x${MAP_CONFIG.MAP_HEIGHT} tiles`, panelX + 20, panelY + 40);
+        this.ctx.fillText(`Camera: ${Math.round(this.camera.x)}, ${Math.round(this.camera.y)}`, panelX + 20, panelY + 70);
         
         if (this.player) {
-            this.ctx.fillText(`Player: ${Math.round(this.player.x)}, ${Math.round(this.player.y)}`, 20, 80);
-            this.ctx.fillText(`Animation: ${this.player.currentAnimation.name}`, 20, 105);
+            this.ctx.fillText(`Player: ${Math.round(this.player.x)}, ${Math.round(this.player.y)}`, panelX + 20, panelY + 100);
+            this.ctx.fillText(`Animation: ${this.player.currentAnimation.name}`, panelX + 20, panelY + 130);
         }
         
         // Display mouse world coordinates
         if (this.mouseWorldX !== undefined && this.mouseWorldY !== undefined) {
             this.ctx.fillStyle = '#00ff00';
-            this.ctx.fillText(`Mouse: ${this.mouseWorldX}, ${this.mouseWorldY}`, 20, 130);
+            this.ctx.fillText(`Mouse: ${this.mouseWorldX}, ${this.mouseWorldY}`, panelX + 20, panelY + 160);
         }
     }
 

@@ -132,14 +132,24 @@ class GameObject {
     
     /**
      * Get bounding box for collision detection
+     * Sử dụng collision box nhỏ hơn (chỉ phần dưới của sprite)
      * @returns {Object} {x, y, width, height}
      */
     getBounds() {
+        // Collision box mặc định: 60% width, 30% height ở phần dưới
+        // Điều này giúp tránh collision box quá lớn cho houses/trees
+        const collisionWidth = this.width * 0.6;
+        const collisionHeight = this.height * 0.3;
+        
+        // Center horizontally, place at bottom
+        const collisionX = this.x + (this.width - collisionWidth) / 2;
+        const collisionY = this.y + this.height - collisionHeight;
+        
         return {
-            x: this.x,
-            y: this.y,
-            width: this.width,
-            height: this.height
+            x: collisionX,
+            y: collisionY,
+            width: collisionWidth,
+            height: collisionHeight
         };
     }
     

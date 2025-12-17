@@ -3,6 +3,7 @@ let welcomeScreen;
 let introScreen;
 let loadingScreen;
 let screen1;
+let screen2;
 let game;
 
 // Initialize when page loads
@@ -24,6 +25,10 @@ window.addEventListener('DOMContentLoaded', () => {
     // Create screen 1 (but don't start yet)
     screen1 = new Screen1();
     window.screen1 = screen1;
+    
+    // Create screen 2 (but don't start yet)
+    screen2 = new Screen2();
+    window.screen2 = screen2;
     
     console.log('All screens initialized');
     
