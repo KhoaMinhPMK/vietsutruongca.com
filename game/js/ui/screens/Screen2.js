@@ -257,57 +257,70 @@ class Screen2 {
     }
     
     setupJoystickControls() {
-        // Touch start
-        this.canvas.addEventListener('touchstart', (e) => {
-            const touch = e.touches[0];
-            const rect = this.canvas.getBoundingClientRect();
-            const x = touch.clientX - rect.left;
-            const y = touch.clientY - rect.top;
-            
-            // Left side = joystick
-            if (x < this.canvas.width / 2) {
-                this.joystick.active = true;
-                this.joystick.startX = x;
-                this.joystick.startY = y;
-                this.joystick.currentX = x;
-                this.joystick.currentY = y;
-            }
-        });
+        const container = document.getElementById('joystick-container');
+        const stick = document.getElementById('joystick-stick');
         
-        // Touch move
-        this.canvas.addEventListener('touchmove', (e) => {
+        if (!container || !stick) return;
+        
+        // Show joystick
+        container.style.display = 'block';
+        
+        const maxDistance = 45;
+        
+        this.touchStartHandler = (e) => {
+            const touch = e.touches[0];
+            const rect = container.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            this.joystick.active = true;
+            this.joystick.startX = centerX;
+            this.joystick.startY = centerY;
+            this.joystick.currentX = touch.clientX;
+            this.joystick.currentY = touch.clientY;
+        };
+        
+        this.touchMoveHandler = (e) => {
             if (!this.joystick.active) return;
             
             const touch = e.touches[0];
-            const rect = this.canvas.getBoundingClientRect();
-            this.joystick.currentX = touch.clientX - rect.left;
-            this.joystick.currentY = touch.clientY - rect.top;
+            this.joystick.currentX = touch.clientX;
+            this.joystick.currentY = touch.clientY;
             
-            const dx = this.joystick.currentX - this.joystick.startX;
-            const dy = this.joystick.currentY - this.joystick.startY;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            const maxDistance = 50;
+            const deltaX = this.joystick.currentX - this.joystick.startX;
+            const deltaY = this.joystick.currentY - this.joystick.startY;
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            
+            let finalX = deltaX;
+            let finalY = deltaY;
             
             if (distance > maxDistance) {
-                this.joystick.currentX = this.joystick.startX + (dx / distance) * maxDistance;
-                this.joystick.currentY = this.joystick.startY + (dy / distance) * maxDistance;
+                const angle = Math.atan2(deltaY, deltaX);
+                finalX = Math.cos(angle) * maxDistance;
+                finalY = Math.sin(angle) * maxDistance;
             }
             
-            this.joystick.deltaX = (this.joystick.currentX - this.joystick.startX) / maxDistance;
-            this.joystick.deltaY = (this.joystick.currentY - this.joystick.startY) / maxDistance;
+            // Update stick visual position
+            stick.style.transform = `translate(calc(-50% + ${finalX}px), calc(-50% + ${finalY}px))`;
+            
+            // Set normalized deltas for movement
+            this.joystick.deltaX = finalX / maxDistance;
+            this.joystick.deltaY = finalY / maxDistance;
             
             e.preventDefault();
-        });
+        };
         
-        // Touch end
-        const endTouch = () => {
+        this.touchEndHandler = () => {
             this.joystick.active = false;
             this.joystick.deltaX = 0;
             this.joystick.deltaY = 0;
+            stick.style.transform = 'translate(-50%, -50%)';
         };
         
-        this.canvas.addEventListener('touchend', endTouch);
-        this.canvas.addEventListener('touchcancel', endTouch);
+        container.addEventListener('touchstart', this.touchStartHandler);
+        container.addEventListener('touchmove', this.touchMoveHandler);
+        container.addEventListener('touchend', this.touchEndHandler);
+        container.addEventListener('touchcancel', this.touchEndHandler);
     }
     
     setupAttackButton() {
@@ -923,6 +936,22 @@ class Screen2 {
         // Remove all event listeners
         document.removeEventListener('keydown', this.boundHandleKeyDown);
         document.removeEventListener('keyup', this.boundHandleKeyUp);
+        
+        // Remove joystick listeners properly
+        const container = document.getElementById('joystick-container');
+        if (container) {
+            if (this.touchStartHandler) container.removeEventListener('touchstart', this.touchStartHandler);
+            if (this.touchMoveHandler) container.removeEventListener('touchmove', this.touchMoveHandler);
+            if (this.touchEndHandler) {
+                container.removeEventListener('touchend', this.touchEndHandler);
+                container.removeEventListener('touchcancel', this.touchEndHandler);
+            }
+        }
+        
+        // Reset joystick state
+        this.joystick.active = false;
+        this.joystick.deltaX = 0;
+        this.joystick.deltaY = 0;
         
         // Clear enemies and projectiles
         this.enemies = [];

@@ -19,6 +19,15 @@ class Screen3 {
         
         // Input
         this.keys = {};
+        this.joystick = {
+            active: false,
+            startX: 0,
+            startY: 0,
+            currentX: 0,
+            currentY: 0,
+            deltaX: 0,
+            deltaY: 0
+        };
         
         // Sprite sheets
         this.idleSpriteSheet = null;
@@ -274,6 +283,12 @@ class Screen3 {
         if (this.keys['s'] || this.keys['arrowdown']) dy += 1;
         if (this.keys['a'] || this.keys['arrowleft']) dx -= 1;
         if (this.keys['d'] || this.keys['arrowright']) dx += 1;
+        
+        // Joystick input (overrides keyboard if active)
+        if (this.joystick.active) {
+            dx = this.joystick.deltaX;
+            dy = this.joystick.deltaY;
+        }
 
         // Normalize diagonal movement
         if (dx !== 0 && dy !== 0) {
@@ -389,6 +404,7 @@ class Screen3 {
         
         // Setup input handlers
         this.setupInputHandlers();
+        this.setupJoystickControls();
     }
 
     startRenderLoop() {
@@ -425,6 +441,73 @@ class Screen3 {
         document.addEventListener('keyup', this.keyupHandler);
     }
 
+    setupJoystickControls() {
+        const container = document.getElementById('joystick-container');
+        const stick = document.getElementById('joystick-stick');
+        
+        if (!container || !stick) return;
+        
+        // Show joystick
+        container.style.display = 'block';
+        
+        const maxDistance = 45;
+        
+        this.touchStartHandler = (e) => {
+            const touch = e.touches[0];
+            const rect = container.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            this.joystick.active = true;
+            this.joystick.startX = centerX;
+            this.joystick.startY = centerY;
+            this.joystick.currentX = touch.clientX;
+            this.joystick.currentY = touch.clientY;
+        };
+        
+        this.touchMoveHandler = (e) => {
+            if (!this.joystick.active) return;
+            
+            const touch = e.touches[0];
+            this.joystick.currentX = touch.clientX;
+            this.joystick.currentY = touch.clientY;
+            
+            const deltaX = this.joystick.currentX - this.joystick.startX;
+            const deltaY = this.joystick.currentY - this.joystick.startY;
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            
+            let finalX = deltaX;
+            let finalY = deltaY;
+            
+            if (distance > maxDistance) {
+                const angle = Math.atan2(deltaY, deltaX);
+                finalX = Math.cos(angle) * maxDistance;
+                finalY = Math.sin(angle) * maxDistance;
+            }
+            
+            // Update stick visual position
+            stick.style.transform = `translate(calc(-50% + ${finalX}px), calc(-50% + ${finalY}px))`;
+            
+            // Set normalized deltas for movement
+            this.joystick.deltaX = finalX / maxDistance;
+            this.joystick.deltaY = finalY / maxDistance;
+            
+            e.preventDefault();
+        };
+        
+        this.touchEndHandler = () => {
+            this.joystick.active = false;
+            this.joystick.deltaX = 0;
+            this.joystick.deltaY = 0;
+            stick.style.transform = 'translate(-50%, -50%)';
+        };
+        
+        container.addEventListener('touchstart', this.touchStartHandler);
+        container.addEventListener('touchmove', this.touchMoveHandler);
+        container.addEventListener('touchend', this.touchEndHandler);
+        container.addEventListener('touchcancel', this.touchEndHandler);
+    }
+
     deactivate() {
         console.log('👋 Screen3 deactivated');
         
@@ -439,6 +522,17 @@ class Screen3 {
         }
         if (this.keyupHandler) {
             document.removeEventListener('keyup', this.keyupHandler);
+        }
+        
+        // Remove joystick handlers
+        const container = document.getElementById('joystick-container');
+        if (container) {
+            if (this.touchStartHandler) container.removeEventListener('touchstart', this.touchStartHandler);
+            if (this.touchMoveHandler) container.removeEventListener('touchmove', this.touchMoveHandler);
+            if (this.touchEndHandler) {
+                container.removeEventListener('touchend', this.touchEndHandler);
+                container.removeEventListener('touchcancel', this.touchEndHandler);
+            }
         }
     }
 }
