@@ -22,8 +22,16 @@ class Screen1 {
         this.resourceManager = new ResourceManager();
         this.resourceBar = new ResourceBar(this.resourceManager);
         
+        // Setup mission complete callback
+        this.resourceManager.onMissionComplete = () => {
+            this.showMissionComplete();
+        };
+        
         // Dialog system
         this.dialogPanel = new DialogPanel();
+        
+        // Completion panel
+        this.completionPanel = new CompletionPanel();
         
         // Keyboard state
         this.keys = {};
@@ -394,7 +402,7 @@ class Screen1 {
                 // Create player at center of map
                 const centerX = (MAP_CONFIG.MAP_WIDTH * MAP_CONFIG.TILE_SIZE) / 2;
                 const centerY = (MAP_CONFIG.MAP_HEIGHT * MAP_CONFIG.TILE_SIZE) / 2;
-                this.player = new Player(centerX, centerY, this.idleSpriteSheet, this.runSpriteSheet, this.runBackSpriteSheet, this.runFrontSpriteSheet);
+                this.player = new Player(centerX, centerY, this.idleSpriteSheet, this.runSpriteSheet, this.runBackSpriteSheet, this.runFrontSpriteSheet, null);
                 
                 console.log('Player loaded successfully!');
             } catch (error) {
@@ -578,23 +586,6 @@ class Screen1 {
             });
             
             console.log(`  ✓ Spawned Cao Lỗ ${i + 1} at (${x}, ${y}) - ${Math.floor(distance)}px from player`);
-        }
-        
-        // Spawn 1 gate RIGHT AT PLAYER POSITION for testing
-        const gateX = Math.floor(playerX + 50); // 50px to the right of player
-        const gateY = Math.floor(playerY);
-        
-        this.gate = new InteractiveGate(gateX, gateY, 'assets/sprites/Dimensional_Portal.png');
-        this.gate.resourceManager = this.resourceManager;
-        
-        console.log(`🚪 Creating gate at (${gateX}, ${gateY}) RIGHT NEXT TO PLAYER`);
-        console.log(`   Gate size: ${this.gate.width}x${this.gate.height}, zIndex: ${this.gate.zIndex}`);
-        console.log(`   Gate sprite: ${this.gate.spritePath}`);
-        console.log(`   Gate position: x=${this.gate.x}, y=${this.gate.y}`);
-        
-        if (this.objectManager && this.objectManager.objects) {
-            this.objectManager.objects.push(this.gate);
-            console.log(`   ✅ Gate added to objectManager.objects (total: ${this.objectManager.objects.length})`);
         }
     }
 
@@ -1002,23 +993,30 @@ class Screen1 {
     }
 
     /**
+     * Show mission complete panel
+     */
+    showMissionComplete() {
+        console.log('🎉 Showing mission complete panel...');
+        this.completionPanel.show(
+            'Đã thu thập đủ gỗ! Chuẩn bị di chuyển...',
+            () => {
+                this.transitionToScreen2();
+            }
+        );
+    }
+
+    /**
      * Transition to Screen2
      */
-    transitionToScreen2() {
+    async transitionToScreen2() {
         console.log('🌀 Transition started...');
         
-        // Hide Screen1 canvas
-        const canvas = document.getElementById('gameCanvas');
-        if (canvas) {
-            canvas.style.display = 'none';
-        }
-        
-        // Clean up Screen1
+        // Clean up Screen1 (stop animation loop)
         this.cleanup();
         
-        // Show Screen2
+        // Show Screen2 (canvas stays visible)
         if (window.screen2) {
-            window.screen2.init();
+            await window.screen2.init();
             window.screen2.startRenderLoop();
             console.log('✅ Screen2 activated');
         }
@@ -1074,36 +1072,6 @@ class Screen1 {
             return false;
         };
         
-        const openGate = (x, y) => {
-            if (!this.gate || !this.camera) return false;
-            
-            // Check if gate button is showing and player has enough wood
-            if (!this.gate.showButton || !this.gate.hasEnoughWood()) return false;
-            
-            const screenX = this.gate.x - this.camera.x;
-            const screenY = this.gate.y - this.camera.y;
-            
-            const buttonWidth = 160;
-            const buttonHeight = 45;
-            const buttonX = screenX + this.gate.width / 2 - buttonWidth / 2;
-            const buttonY = screenY - 55;
-            
-            // Hit area with padding
-            const hitPadding = 20;
-            
-            console.log(`🖱️ Gate click check: (${x.toFixed(1)}, ${y.toFixed(1)})`);
-            console.log(`   Button area: x=${(buttonX - hitPadding).toFixed(1)} to ${(buttonX + buttonWidth + hitPadding).toFixed(1)}, y=${(buttonY - hitPadding).toFixed(1)} to ${(buttonY + buttonHeight + hitPadding).toFixed(1)}`);
-            
-            if (x >= buttonX - hitPadding && x <= buttonX + buttonWidth + hitPadding &&
-                y >= buttonY - hitPadding && y <= buttonY + buttonHeight + hitPadding) {
-                console.log('✅ GATE ACTIVATED! Transitioning to Screen2...');
-                this.transitionToScreen2();
-                return true;
-            }
-            
-            return false;
-        };
-        
         // Mouse events
         this.canvas.addEventListener('mousedown', (e) => {
             // Priority 1: Check dialog next button
@@ -1130,22 +1098,7 @@ class Screen1 {
                 }
             }
             
-            // Priority 2: Check gate button (if gate exists and dialog is closed)
-            if (!this.dialogPanel.isOpen()) {
-                const rect = this.canvas.getBoundingClientRect();
-                const scaleX = this.canvas.width / rect.width;
-                const scaleY = this.canvas.height / rect.height;
-                const x = (e.clientX - rect.left) * scaleX;
-                const y = (e.clientY - rect.top) * scaleY;
-                
-                if (openGate(x, y)) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    return;
-                }
-            }
-            
-            // Priority 3: Check NPC interaction
+            // Priority 2: Check NPC interaction
             const rect = this.canvas.getBoundingClientRect();
             const scaleX = this.canvas.width / rect.width;
             const scaleY = this.canvas.height / rect.height;
@@ -1277,11 +1230,12 @@ class Screen1 {
                     else if (obj instanceof InteractiveTree) {
                         obj.update(deltaTime, this.player);
                     }
-                    // Update InteractiveGate (animation and interaction)
-                    else if (obj instanceof InteractiveGate) {
-                        obj.update(deltaTime, this.player);
-                    }
                 }
+            }
+            
+            // Update completion panel timer
+            if (this.completionPanel) {
+                this.completionPanel.update(deltaTime);
             }
             
             // Camera follow player first
@@ -1361,13 +1315,6 @@ class Screen1 {
                 this.ctx.save();
                 this.renderNPCInteractionUI();
                 this.ctx.restore();
-                
-                // Render gate interaction UI
-                if (this.gate) {
-                    this.ctx.save();
-                    this.gate.renderUI(this.ctx, this.camera);
-                    this.ctx.restore();
-                }
             }
         } else {
             // No objects, just render player
@@ -1389,6 +1336,11 @@ class Screen1 {
         // Draw dialog panel (topmost layer)
         if (this.dialogPanel) {
             this.dialogPanel.render(this.ctx, this.canvas.width, this.canvas.height);
+        }
+        
+        // Draw completion panel (above everything)
+        if (this.completionPanel) {
+            this.completionPanel.render(this.ctx, this.canvas.width, this.canvas.height);
         }
     }
 
@@ -1489,6 +1441,21 @@ class Screen1 {
     /**
      * Stop screen
      */
+    /**
+     * Cleanup Screen1 resources
+     */
+    cleanup() {
+        console.log('🧹 Screen1 cleanup');
+        
+        // Stop animation loop
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+        }
+        
+        // Clear keyboard listeners
+        this.keys = {};
+    }
+    
     stop() {
         if (this.animationId) {
             cancelAnimationFrame(this.animationId);

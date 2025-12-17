@@ -119,13 +119,7 @@
 
         <div class="controls">
             <div class="control-group">
-                <label>Tải ảnh Sprite Sheet:</label>
-                <input type="file" id="spriteFile" accept="image/*" onchange="onFileSelect()" style="width: 300px; padding: 5px; background: #333; border: 1px solid #555; color: #fff; border-radius: 5px;">
-                <span style="color: #888; margin-left: 10px;">hoặc</span>
-            </div>
-
-            <div class="control-group">
-                <label>Chọn Sprite có sẵn:</label>
+                <label>Chọn Sprite:</label>
                 <select id="spriteSelect" onchange="onSpriteChange()">
                     <option value="assets/sprites/caolo.png|31.25|50|8">Cao Lỗ (250x50, 8 frames)</option>
                     <option value="assets/sprites/player_idle.png|30|50|8">Idle (240x50, 8 frames)</option>
@@ -134,6 +128,13 @@
                     <option value="assets/sprites/run_back.png|31.25|50|8">Run Back (250x50, 8 frames?)</option>
                     <option value="assets/sprites/run_front.png|40|60|8">Run Front (320x180, 8 frames, 3 rows?)</option>
                     <option value="assets/sprites/run_front.png|32|60|10">Run Front (320x180, 10 frames, 3 rows?)</option>
+                    <option value="assets/sprites/actack1.png|30|50|8|8|0">⚔️ Attack (giống run_back: 30x50, 8 frames, offset 8,0)</option>
+                    <option value="assets/sprites/actack1.png|40|55|8|0|0">⚔️ Attack (test: 40x55, 8 frames)</option>
+                    <option value="assets/sprites/actack1.png|31.25|50|8|0|0">⚔️ Attack (test: 31.25x50, 8 frames)</option>
+                    <option value="assets/sprites/linh_run_back.png|30|50|8|0|0">🪖 Lính Run Back (test: 30x50, 8 frames)</option>
+                    <option value="assets/sprites/linh_run_back.png|40|55|8|0|0">🪖 Lính Run Back (test: 40x55, 8 frames)</option>
+                    <option value="assets/sprites/linh_run_back.png|31.25|50|8|0|0">🪖 Lính Run Back (test: 31.25x50, 8 frames)</option>
+                    <option value="assets/sprites/linh_run_back.png|25|50|10|0|0">🪖 Lính Run Back (test: 25x50, 10 frames)</option>
                     <option value="custom">Custom...</option>
                 </select>
             </div>
@@ -219,36 +220,6 @@
         let lastFrameTime = 0;
         let isPlaying = true;
         let animationId = null;
-        let uploadedImageUrl = null;
-
-        // Handle file selection
-        function onFileSelect() {
-            const fileInput = document.getElementById('spriteFile');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                return;
-            }
-
-            // Check if it's an image
-            if (!file.type.startsWith('image/')) {
-                document.getElementById('error').textContent = '❌ Vui lòng chọn file ảnh hợp lệ!';
-                return;
-            }
-
-            // Create object URL from file
-            if (uploadedImageUrl) {
-                URL.revokeObjectURL(uploadedImageUrl);
-            }
-            
-            uploadedImageUrl = URL.createObjectURL(file);
-            
-            // Update sprite path display
-            document.getElementById('spritePath').value = file.name;
-            
-            // Load the uploaded image
-            loadSpriteFromUrl(uploadedImageUrl);
-        }
 
         // On sprite selection change
         function onSpriteChange() {
@@ -265,17 +236,27 @@
             document.getElementById('frameHeight').value = parts[2];
             document.getElementById('totalFrames').value = parts[3];
             
+            // Set offset if provided
+            if (parts.length > 4) {
+                document.getElementById('offsetX').value = parts[4];
+                document.getElementById('offsetY').value = parts[5] || '0';
+            } else {
+                document.getElementById('offsetX').value = '0';
+                document.getElementById('offsetY').value = '0';
+            }
+            
             loadSprite();
         }
 
-        // Load sprite from URL (file or path)
-        function loadSpriteFromUrl(url) {
+        // Load sprite
+        function loadSprite() {
+            const path = document.getElementById('spritePath').value;
             const error = document.getElementById('error');
             error.textContent = '';
 
             spriteImage = new Image();
             spriteImage.onload = function() {
-                console.log('Sprite loaded:', url);
+                console.log('Sprite loaded:', path);
                 document.getElementById('spriteSize').textContent = `${spriteImage.width}x${spriteImage.height}px`;
                 error.textContent = '';
                 currentFrame = 0;
@@ -287,29 +268,10 @@
                 }
             };
             spriteImage.onerror = function() {
-                error.textContent = `❌ Không thể load sprite: ${url}`;
-                console.error('Failed to load:', url);
+                error.textContent = `❌ Không thể load sprite: ${path}`;
+                console.error('Failed to load:', path);
             };
-            spriteImage.src = url;
-        }
-
-        // Load sprite (from path or uploaded file)
-        function loadSprite() {
-            const fileInput = document.getElementById('spriteFile');
-            
-            // If file is uploaded, use it
-            if (fileInput.files && fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                if (uploadedImageUrl) {
-                    URL.revokeObjectURL(uploadedImageUrl);
-                }
-                uploadedImageUrl = URL.createObjectURL(file);
-                loadSpriteFromUrl(uploadedImageUrl);
-            } else {
-                // Otherwise, load from path
-                const path = document.getElementById('spritePath').value;
-                loadSpriteFromUrl(path);
-            }
+            spriteImage.src = path;
         }
 
         // Create frame selection buttons

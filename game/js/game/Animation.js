@@ -48,4 +48,11 @@ class Animation {
         this.elapsedTime = 0;
         this.finished = false;
     }
+
+    /**
+     * Check if animation is complete (for non-looping animations)
+     */
+    isComplete() {
+        return this.finished;
+    }
 }

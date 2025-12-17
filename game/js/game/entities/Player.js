@@ -1,12 +1,13 @@
 // Player - Game character with animation
 class Player {
-    constructor(x, y, idleSpriteSheet, runSpriteSheet, runBackSpriteSheet, runFrontSpriteSheet) {
+    constructor(x, y, idleSpriteSheet, runSpriteSheet, runBackSpriteSheet, runFrontSpriteSheet, attackSpriteSheet) {
         this.x = x;
         this.y = y;
         this.idleSpriteSheet = idleSpriteSheet;
         this.runSpriteSheet = runSpriteSheet;           // Left/Right
         this.runBackSpriteSheet = runBackSpriteSheet;   // Up
         this.runFrontSpriteSheet = runFrontSpriteSheet; // Down
+        this.attackSpriteSheet = attackSpriteSheet;     // Attack
         this.scale = 1; // Scale player sprite
         this.runFrontScale = 0.9; // 10% smaller for run_front
         
@@ -15,6 +16,8 @@ class Player {
         this.runAnimation = new Animation('run', 0, PLAYER_CONFIG.RUN_FRAMES, PLAYER_CONFIG.RUN_FRAME_TIME);
         this.runBackAnimation = new Animation('run_back', 0, PLAYER_CONFIG.RUN_BACK_FRAMES, PLAYER_CONFIG.RUN_FRAME_TIME);
         this.runFrontAnimation = new Animation('run_front', 0, PLAYER_CONFIG.RUN_FRONT_FRAMES, PLAYER_CONFIG.RUN_FRAME_TIME);
+        this.attackAnimation = new Animation('attack', 0, 8, 100); // 8 frames, 100ms
+        this.attackAnimation.loop = false; // Don't loop attack animation
         this.currentAnimation = this.idleAnimation;
         
         // Movement
@@ -24,6 +27,9 @@ class Player {
         
         // Direction (for sprite flipping)
         this.facingLeft = false;
+        
+        // Attack state
+        this.isAttacking = false;
     }
 
     /**
@@ -44,9 +50,21 @@ class Player {
      * Render player
      * @param {CanvasRenderingContext2D} ctx - Canvas context
      * @param {Camera} camera - Camera for screen position
+     * @param {boolean} useWorldCoords - If true, render at world position (for ctx.translate). If false, use camera.worldToScreen
      */
-    render(ctx, camera) {
-        const screen = camera.worldToScreen(this.x, this.y);
+    render(ctx, camera, useWorldCoords = false) {
+        let renderX, renderY;
+        
+        if (useWorldCoords) {
+            // Context is translated (Screen2) - use world position
+            renderX = this.x;
+            renderY = this.y;
+        } else {
+            // Context not translated (Screen1) - use screen position
+            const screen = camera.worldToScreen(this.x, this.y);
+            renderX = screen.x;
+            renderY = screen.y;
+        }
         
         const frameIndex = this.currentAnimation.getCurrentFrameIndex();
         
@@ -58,6 +76,8 @@ class Player {
             spriteSheet = this.runBackSpriteSheet;
         } else if (this.currentAnimation.name === 'run_front') {
             spriteSheet = this.runFrontSpriteSheet;
+        } else if (this.currentAnimation.name === 'attack') {
+            spriteSheet = this.attackSpriteSheet;
         }
         
         // Use different scale for run_front
@@ -66,8 +86,8 @@ class Player {
         spriteSheet.drawFrame(
             ctx,
             frameIndex,
-            screen.x,
-            screen.y,
+            renderX,
+            renderY,
             scale,
             this.facingLeft // Auto flip based on direction
         );
@@ -126,6 +146,39 @@ class Player {
         } else {
             this.currentAnimation = this.idleAnimation;
         }
+    }
+    
+    /**
+     * Attack animation
+     */
+    attack() {
+        if (this.isAttacking) return;
+        
+        this.isAttacking = true;
+        this.currentAnimation = this.attackAnimation;
+        this.attackAnimation.reset();
+        
+        console.log('⚔️ Player attacking!');
+    }
+    
+    /**
+     * Update player
+     * @param {number} deltaTime - Time since last update in ms
+     * @param {number} mapWidth - Map width in pixels (optional) OR dx for movement
+     * @param {number} mapHeight - Map height in pixels (optional) OR dy for movement
+     */
+    update(deltaTime, mapWidth = 0, mapHeight = 0) {
+        // Update current animation
+        this.currentAnimation.update(deltaTime);
+        
+        // Check if attack animation finished
+        if (this.isAttacking && this.attackAnimation.isComplete()) {
+            this.isAttacking = false;
+            this.currentAnimation = this.idleAnimation;
+        }
+        
+        // Update position with boundaries (old behavior for Screen1)
+        this.updatePosition(mapWidth, mapHeight);
     }
     
     /**

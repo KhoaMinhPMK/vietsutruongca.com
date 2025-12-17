@@ -11,6 +11,9 @@ class ResourceManager {
         
         // Callbacks khi tài nguyên thay đổi
         this.onResourceChange = null;
+        this.onMissionComplete = null; // Callback khi hoàn thành nhiệm vụ
+        this.missionWoodTarget = 2; // Số gỗ cần thu thập
+        this.missionCompleted = false; // Đã hoàn thành chưa
     }
     
     /**
@@ -23,6 +26,15 @@ class ResourceManager {
         
         if (this.onResourceChange) {
             this.onResourceChange('wood', this.resources.wood);
+        }
+        
+        // Check mission complete
+        if (!this.missionCompleted && this.resources.wood >= this.missionWoodTarget) {
+            this.missionCompleted = true;
+            console.log('🎉 Mission Complete! Collected enough wood!');
+            if (this.onMissionComplete) {
+                this.onMissionComplete();
+            }
         }
     }
     
