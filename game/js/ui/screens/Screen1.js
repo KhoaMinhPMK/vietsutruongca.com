@@ -94,14 +94,93 @@ class Screen1 {
                     pointer-events: none;
                 "></div>
             </div>
+            
+            <!-- Fullscreen Button -->
+            <button id="fullscreen-btn" style="
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                background: rgba(0, 0, 0, 0.7);
+                border: 2px solid #d4af37;
+                border-radius: 10px;
+                color: #d4af37;
+                font-size: 24px;
+                cursor: pointer;
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            " title="Full màn hình">
+                ⛶
+            </button>
         `;
         this.screen.insertAdjacentHTML('beforeend', joystickHTML);
+        
+        // Setup fullscreen button
+        this.setupFullscreenButton();
         
         // Auto-resize canvas for mobile/desktop
         this.setupCanvasResize();
         
         console.log('Canvas created:', this.canvas.width, 'x', this.canvas.height);
         console.log('Device:', /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop');
+    }
+
+    /**
+     * Setup fullscreen button
+     */
+    setupFullscreenButton() {
+        const btn = document.getElementById('fullscreen-btn');
+        if (!btn) return;
+        
+        const toggleFullscreen = async () => {
+            try {
+                if (!document.fullscreenElement) {
+                    // Enter fullscreen
+                    await document.documentElement.requestFullscreen({ navigationUI: "hide" });
+                    btn.innerHTML = '⛶'; // Change icon when fullscreen
+                    btn.style.background = 'rgba(212, 175, 55, 0.3)';
+                } else {
+                    // Exit fullscreen
+                    await document.exitFullscreen();
+                    btn.innerHTML = '⛶';
+                    btn.style.background = 'rgba(0, 0, 0, 0.7)';
+                }
+            } catch (error) {
+                console.warn('Fullscreen not supported:', error);
+            }
+        };
+        
+        // Button click
+        btn.addEventListener('click', toggleFullscreen);
+        
+        // Handle fullscreen change (user pressing ESC, etc.)
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                btn.style.opacity = '0.3'; // Fade out when fullscreen
+                btn.innerHTML = '✕'; // X icon to exit
+            } else {
+                btn.style.opacity = '1';
+                btn.innerHTML = '⛶'; // Fullscreen icon
+            }
+        });
+        
+        // Hover effects
+        btn.addEventListener('mouseenter', () => {
+            btn.style.transform = 'scale(1.1)';
+            btn.style.background = 'rgba(212, 175, 55, 0.5)';
+        });
+        
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = 'scale(1)';
+            if (!document.fullscreenElement) {
+                btn.style.background = 'rgba(0, 0, 0, 0.7)';
+            }
+        });
     }
 
     /**
