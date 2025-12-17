@@ -15,6 +15,9 @@ class Screen1 {
         this.animationId = null;
         this.lastTime = 0;
         
+        // Game objects from editor
+        this.objectManager = null;
+        
         // Keyboard state
         this.keys = {};
         
@@ -94,8 +97,69 @@ class Screen1 {
         `;
         this.screen.insertAdjacentHTML('beforeend', joystickHTML);
         
+        // Auto-resize canvas for mobile/desktop
+        this.setupCanvasResize();
+        
         console.log('Canvas created:', this.canvas.width, 'x', this.canvas.height);
         console.log('Device:', /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop');
+    }
+
+    /**
+     * Setup canvas auto-resize for responsive design
+     */
+    setupCanvasResize() {
+        const resizeCanvas = () => {
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                // Full screen on mobile
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+                
+                // Show joystick on mobile
+                const joystick = document.getElementById('joystick-container');
+                if (joystick) joystick.style.display = 'block';
+            } else {
+                // Fixed size on desktop (16:9 aspect ratio)
+                const maxWidth = window.innerWidth - 40;
+                const maxHeight = window.innerHeight - 40;
+                const aspectRatio = 16 / 9;
+                
+                let width = maxWidth;
+                let height = width / aspectRatio;
+                
+                if (height > maxHeight) {
+                    height = maxHeight;
+                    width = height * aspectRatio;
+                }
+                
+                this.canvas.width = width;
+                this.canvas.height = height;
+                
+                // Hide joystick on desktop
+                const joystick = document.getElementById('joystick-container');
+                if (joystick) joystick.style.display = 'none';
+            }
+            
+            // Update camera dimensions if camera exists
+            if (this.camera) {
+                this.camera.canvasWidth = this.canvas.width;
+                this.camera.canvasHeight = this.canvas.height;
+                this.camera.width = this.canvas.width;
+                this.camera.height = this.canvas.height;
+            }
+            
+            console.log(`Canvas resized: ${this.canvas.width}x${this.canvas.height} (${isMobile ? 'Mobile' : 'Desktop'})`);
+        };
+        
+        // Initial resize
+        resizeCanvas();
+        
+        // Resize on window resize or orientation change
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(resizeCanvas, 100); // Delay for orientation change
+        });
     }
 
     /**
@@ -173,6 +237,10 @@ class Screen1 {
                 this.tileset
             );
             
+            // Initialize object manager and try to load map objects
+            this.objectManager = new GameObjectManager();
+            await this.loadMapObjects();
+            
             // Create camera with actual canvas dimensions
             this.camera = new Camera(
                 MAP_CONFIG.MAP_WIDTH,
@@ -195,6 +263,22 @@ class Screen1 {
             
             console.log('Map loaded successfully!');
             
+            // ===== SPAWN NPCs TỪ CODE (Tùy chọn) =====
+            // Comment dòng loadMapObjects() ở trên và dùng code dưới đây
+            // để spawn NPCs trực tiếp từ code thay vì dùng map_data.json
+            /*
+            this.spawnNPC('npc_caolo', 100, 100, 'sprites/caolo.png', {
+                name: 'Cao Lỗ số 1'
+            });
+            
+            // Hoặc spawn nhiều NPCs cùng lúc:
+            this.spawnNPCs([
+                { type: 'npc_caolo', x: 200, y: 150, sprite: 'sprites/caolo.png' },
+                { type: 'npc_caolo', x: 300, y: 200, sprite: 'sprites/caolo.png' },
+                { type: 'npc_caolo', x: 400, y: 250, sprite: 'sprites/caolo.png' }
+            ]);
+            */
+            
             // Start render loop
             this.startRenderLoop();
             
@@ -203,13 +287,177 @@ class Screen1 {
             this.setupKeyboardControls();
             this.setupJoystickControls();
             
+            // Setup global console commands for easy NPC spawning
+            this.setupConsoleCommands();
+            
         } catch (error) {
             console.error('Failed to load map:', error);
         }
     }
 
+    /**     * Load map objects from JSON file
+     */
+    async loadMapObjects() {
+        try {
+            const response = await fetch('map_data.json');
+            if (!response.ok) {
+                console.warn('No map_data.json found, starting with empty map');
+                return;
+            }
+            
+            const mapData = await response.json();
+            this.objectManager.loadFromJSON(mapData);
+            console.log(`✓ Loaded ${this.objectManager.objects.length} objects from map_data.json`);
+        } catch (error) {
+            console.warn('Could not load map objects:', error.message);
+        }
+    }
+
     /**
-     * Setup mouse controls for camera
+     * Spawn NPC từ code (tiện hơn editor!)
+     * @param {string} npcType - Loại NPC (vd: 'npc_caolo', 'npc_guard')
+     * @param {number} x - Vị trí X
+     * @param {number} y - Vị trí Y
+     * @param {string} spritePath - Đường dẫn sprite
+     * @param {Object} options - Tùy chọn thêm (width, height, animation, etc.)
+     */
+    spawnNPC(npcType, x, y, spritePath, options = {}) {
+        const npcData = {
+            id: `npc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            type: npcType,
+            spritePath: spritePath,
+            x: x,
+            y: y,
+            width: options.width || 30,
+            height: options.height || 50,
+            zIndex: options.zIndex || 50,
+            collidable: options.collidable !== undefined ? options.collidable : true,
+            interactable: options.interactable !== undefined ? options.interactable : true,
+            metadata: {
+                name: options.name || npcType,
+                animation: options.animation || {
+                    frameCount: 8,
+                    frameTime: 100
+                }
+            }
+        };
+        
+        const npc = NPC.fromJSON(npcData);
+        this.objectManager.add(npc);
+        console.log(`✓ Spawned ${npcType} at (${x}, ${y})`);
+        return npc;
+    }
+
+    /**
+     * Spawn nhiều NPCs cùng lúc từ danh sách vị trí
+     * @param {Array} npcList - Array of {type, x, y, sprite, ...options}
+     */
+    spawnNPCs(npcList) {
+        for (const npcConfig of npcList) {
+            this.spawnNPC(
+                npcConfig.type,
+                npcConfig.x,
+                npcConfig.y,
+                npcConfig.sprite,
+                npcConfig.options || {}
+            );
+        }
+        console.log(`✓ Spawned ${npcList.length} NPCs`);
+    }
+
+    /**
+     * Setup global console commands để spawn NPCs dễ dàng
+     */
+    setupConsoleCommands() {
+        // Make this Screen1 instance accessible globally
+        window.gameScreen = this;
+        
+        // Command: spawn(type, x, y) - Spawn NPCs
+        window.spawn = (type, x, y, name) => {
+            const spriteMap = {
+                'caolo': 'assets/sprites/caolo.png',
+                'guard': 'assets/sprites/guard_idle.png',
+                'villager': 'assets/sprites/villager_idle.png',
+                'merchant': 'assets/sprites/merchant_idle.png'
+            };
+            
+            const sprite = spriteMap[type] || 'assets/sprites/caolo.png';
+            const npcType = `npc_${type}`;
+            
+            return this.spawnNPC(npcType, x, y, sprite, {
+                name: name || type
+            });
+        };
+        
+        // Command: house(type, x, y) - Spawn houses
+        window.house = (type, x, y) => {
+            const houseMap = {
+                'small': { sprite: 'assets/objects/buildings/house_small.png', width: 64, height: 80 },
+                'large': { sprite: 'assets/objects/buildings/house_large.png', width: 128, height: 160 },
+                'medium': { sprite: 'assets/objects/buildings/house.png', width: 96, height: 120 }
+            };
+            
+            const config = houseMap[type] || houseMap['small'];
+            const objData = {
+                id: `house_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                type: `house_${type}`,
+                spritePath: config.sprite,
+                x: x,
+                y: y,
+                width: config.width,
+                height: config.height,
+                zIndex: 60,
+                collidable: true,
+                interactable: false,
+                metadata: { name: `House ${type}` }
+            };
+            
+            const obj = GameObject.fromJSON(objData);
+            this.objectManager.add(obj);
+            console.log(`✓ Spawned house_${type} at (${x}, ${y})`);
+            return obj;
+        };
+        
+        // Command: spawnAt(type, name) - spawn at mouse position
+        window.spawnAt = (type, name) => {
+            if (!this.mouseWorldX || !this.mouseWorldY) {
+                console.error('❌ Di chuyển chuột trên map trước!');
+                return;
+            }
+            return window.spawn(type, this.mouseWorldX, this.mouseWorldY, name);
+        };
+        
+        // Command: clearNPCs() - xóa tất cả NPCs
+        window.clearNPCs = () => {
+            const npcCount = this.objectManager.objects.length;
+            this.objectManager.objects = [];
+            this.objectManager.objectsById = {};
+            console.log(`✓ Đã xóa ${npcCount} NPCs`);
+        };
+        
+        // Command: listNPCs() - list all NPCs
+        window.listNPCs = () => {
+            console.table(this.objectManager.objects.map(obj => ({
+                id: obj.id,
+                type: obj.type,
+                x: obj.x,
+                y: obj.y,
+                name: obj.metadata?.name
+            })));
+        };
+        
+        console.log('%c🎮 Console Commands đã sẵn sàng!', 'color: #00ff00; font-size: 14px; font-weight: bold');
+        console.log('%cCách dùng:', 'color: #d4af37; font-weight: bold');
+        console.log('  spawn("caolo", 200, 300)          - Spawn NPC Cao Lỗ tại (200, 300)');
+        console.log('  spawnAt("caolo")                  - Spawn NPC tại vị trí chuột');
+        console.log('  house("small", 200, 300)          - Spawn nhà nhỏ tại (200, 300)');
+        console.log('  house("large", 400, 500)          - Spawn nhà lớn tại (400, 500)');
+        console.log('  listNPCs()                        - Xem tất cả objects');
+        console.log('  clearNPCs()                       - Xóa tất cả objects');
+        console.log('%cVí dụ: Di chuột đến vị trí → xem Mouse: X, Y → gõ lệnh', 'color: #00ff00');
+    }
+
+    /**     * Setup mouse controls for camera
      */
     setupMouseControls() {
         let isDragging = false;
@@ -224,6 +472,13 @@ class Screen1 {
         });
 
         this.canvas.addEventListener('mousemove', (e) => {
+            // Update mouse world position for debug display
+            const rect = this.canvas.getBoundingClientRect();
+            const canvasX = e.clientX - rect.left;
+            const canvasY = e.clientY - rect.top;
+            this.mouseWorldX = Math.floor(this.camera.x + canvasX);
+            this.mouseWorldY = Math.floor(this.camera.y + canvasY);
+            
             if (!isDragging) return;
 
             const deltaX = e.clientX - lastX;
@@ -373,6 +628,66 @@ class Screen1 {
     }
 
     /**
+     * Move player with collision detection
+     */
+    movePlayerWithCollision(dx, dy) {
+        if (!this.player) return;
+        
+        // Update player animation state
+        this.player.move(dx, dy);
+        
+        // If no movement, no need to check collision
+        if (dx === 0 && dy === 0) return;
+        
+        // Get player size
+        const playerSize = this.player.getSize();
+        
+        // Calculate new position
+        const newX = this.player.x + dx * this.player.speed;
+        const newY = this.player.y + dy * this.player.speed;
+        
+        // Create player bounding box at new position
+        const playerBox = {
+            x: newX,
+            y: newY,
+            width: playerSize.width,
+            height: playerSize.height
+        };
+        
+        // Check collision with all collidable objects
+        let hasCollision = false;
+        if (this.objectManager) {
+            const collidableObjects = this.objectManager.objects.filter(obj => obj.collidable);
+            
+            for (const obj of collidableObjects) {
+                const objBox = obj.getBounds();
+                
+                // AABB collision detection
+                if (this.checkAABB(playerBox, objBox)) {
+                    hasCollision = true;
+                    break;
+                }
+            }
+        }
+        
+        // Only update position if no collision
+        if (!hasCollision) {
+            this.player.x = newX;
+            this.player.y = newY;
+        }
+    }
+    
+    /**
+     * Check AABB collision between two rectangles
+     */
+    checkAABB(rect1, rect2) {
+        return rect1.x < rect2.x + rect2.width &&
+               rect1.x + rect1.width > rect2.x &&
+               rect1.y < rect2.y + rect2.height &&
+               rect1.y + rect1.height > rect2.y;
+    }
+    
+    /**
      * Update game logic
      */
     update(deltaTime) {
@@ -399,8 +714,19 @@ class Screen1 {
                 dy *= 0.707;
             }
             
-            this.player.move(dx, dy);
+            // Move player with collision detection
+            this.movePlayerWithCollision(dx, dy);
             this.player.update(deltaTime, 0, 0); // Update animation only, no map bounds
+            
+            // Update NPCs animations
+            if (this.objectManager && this.objectManager.objects) {
+                for (const obj of this.objectManager.objects) {
+                    // Update NPC animations
+                    if (obj instanceof NPC) {
+                        obj.update(deltaTime);
+                    }
+                }
+            }
             
             // Camera follow player first
             const playerCenter = this.player.getCenter();
@@ -433,14 +759,42 @@ class Screen1 {
         this.ctx.fillStyle = '#000';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Render map
+        // Render map (tilemap background)
         if (this.map && this.camera) {
             this.map.render(this.ctx, this.camera);
         }
 
-        // Render player
-        if (this.player && this.camera) {
-            this.player.render(this.ctx, this.camera);
+        // Render game objects (from editor) using LayeredRenderer
+        if (this.objectManager && this.camera) {
+            // Save context for camera transform
+            this.ctx.save();
+            
+            // Get objects behind player (z-index < 50)
+            const objectsBehind = this.objectManager.objects.filter(obj => obj.zIndex < 50);
+            const objectsInFront = this.objectManager.objects.filter(obj => obj.zIndex >= 50);
+            
+            // Render objects behind player
+            objectsBehind.forEach(obj => obj.render(this.ctx, this.camera));
+            
+            this.ctx.restore();
+            
+            // Render player
+            if (this.player) {
+                this.player.render(this.ctx, this.camera);
+            }
+            
+            // Save context again for objects in front
+            this.ctx.save();
+            
+            // Render objects in front of player
+            objectsInFront.forEach(obj => obj.render(this.ctx, this.camera));
+            
+            this.ctx.restore();
+        } else {
+            // No objects, just render player
+            if (this.player && this.camera) {
+                this.player.render(this.ctx, this.camera);
+            }
         }
 
         // Draw info text
@@ -452,7 +806,7 @@ class Screen1 {
      */
     drawDebugInfo() {
         this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-        this.ctx.fillRect(10, 10, 350, 120);
+        this.ctx.fillRect(10, 10, 350, 150);
         
         this.ctx.fillStyle = '#d4af37';
         this.ctx.font = '16px monospace';
@@ -462,6 +816,12 @@ class Screen1 {
         if (this.player) {
             this.ctx.fillText(`Player: ${Math.round(this.player.x)}, ${Math.round(this.player.y)}`, 20, 80);
             this.ctx.fillText(`Animation: ${this.player.currentAnimation.name}`, 20, 105);
+        }
+        
+        // Display mouse world coordinates
+        if (this.mouseWorldX !== undefined && this.mouseWorldY !== undefined) {
+            this.ctx.fillStyle = '#00ff00';
+            this.ctx.fillText(`Mouse: ${this.mouseWorldX}, ${this.mouseWorldY}`, 20, 130);
         }
     }
 

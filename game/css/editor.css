@@ -1,0 +1,499 @@
+/* ========================================
+   Editor CSS - Map Editor Styling
+   Dark theme for professional editor look
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #1e1e1e;
+    color: #d4d4d4;
+    overflow: hidden;
+    height: 100vh;
+}
+
+#editor-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* ========================================
+   Toolbar
+   ======================================== */
+
+#toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #2d2d30;
+    border-bottom: 1px solid #3e3e42;
+    padding: 8px 16px;
+    height: 50px;
+}
+
+.editor-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #cccccc;
+    margin: 0;
+}
+
+.toolbar-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toolbar-tools {
+    flex: 1;
+    justify-content: center;
+}
+
+.toolbar-separator {
+    width: 1px;
+    height: 24px;
+    background: #3e3e42;
+    margin: 0 8px;
+}
+
+.tool-btn,
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: #3e3e42;
+    border: 1px solid #555;
+    color: #cccccc;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+
+.tool-btn:hover,
+.action-btn:hover {
+    background: #4e4e52;
+    border-color: #666;
+}
+
+.tool-btn.active {
+    background: #007acc;
+    border-color: #007acc;
+    color: #fff;
+}
+
+.action-btn.primary {
+    background: #0e639c;
+    border-color: #0e639c;
+    color: #fff;
+}
+
+.action-btn.primary:hover {
+    background: #1177bb;
+}
+
+.icon {
+    font-size: 16px;
+}
+
+/* ========================================
+   Main Content Area
+   ======================================== */
+
+#main-content {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* ========================================
+   Sidebar
+   ======================================== */
+
+#sidebar {
+    width: 300px;
+    background: #252526;
+    border-right: 1px solid #3e3e42;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.sidebar-panel {
+    padding: 16px;
+    border-bottom: 1px solid #3e3e42;
+}
+
+.panel-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #cccccc;
+}
+
+/* Search Box */
+.search-box {
+    margin-bottom: 12px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 8px;
+    background: #3c3c3c;
+    border: 1px solid #555;
+    color: #d4d4d4;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: #007acc;
+}
+
+/* Category Tabs */
+.category-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.category-tab {
+    padding: 4px 10px;
+    background: #3e3e42;
+    border: 1px solid #555;
+    color: #cccccc;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+.category-tab:hover {
+    background: #4e4e52;
+}
+
+.category-tab.active {
+    background: #007acc;
+    border-color: #007acc;
+    color: #fff;
+}
+
+/* Object List */
+.object-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.object-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px;
+    background: #3c3c3c;
+    border: 2px solid #555;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.object-item:hover {
+    background: #4e4e52;
+    border-color: #007acc;
+}
+
+.object-item.selected {
+    border-color: #007acc;
+    background: #2a4d6e;
+}
+
+.object-thumbnail {
+    width: 64px;
+    height: 64px;
+    background: #2d2d30;
+    border: 1px solid #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    border-radius: 4px;
+}
+
+.object-thumbnail img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.object-name {
+    font-size: 11px;
+    text-align: center;
+    color: #cccccc;
+}
+
+/* ========================================
+   Properties Panel
+   ======================================== */
+
+#properties-panel {
+    font-size: 13px;
+}
+
+.no-selection {
+    text-align: center;
+    padding: 20px;
+    color: #858585;
+}
+
+.no-selection small {
+    font-size: 11px;
+}
+
+.properties-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.form-group label {
+    font-size: 12px;
+    color: #cccccc;
+    font-weight: 500;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group textarea {
+    padding: 6px 8px;
+    background: #3c3c3c;
+    border: 1px solid #555;
+    color: #d4d4d4;
+    border-radius: 3px;
+    font-size: 13px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #007acc;
+}
+
+.form-group input[readonly] {
+    background: #2d2d30;
+    color: #858585;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.slider-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.slider-group input[type="range"] {
+    flex: 1;
+}
+
+.slider-group span {
+    min-width: 40px;
+    text-align: right;
+    font-weight: 600;
+    color: #007acc;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.form-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.btn {
+    padding: 8px 16px;
+    background: #0e639c;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    background: #1177bb;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.btn-danger {
+    background: #c72e2e;
+}
+
+.btn-danger:hover {
+    background: #e73e3e;
+}
+
+/* ========================================
+   Canvas Area
+   ======================================== */
+
+#canvas-container {
+    flex: 1;
+    position: relative;
+    background: #1e1e1e;
+    overflow: hidden;
+}
+
+#editor-canvas {
+    display: block;
+    cursor: crosshair;
+    image-rendering: pixelated;
+}
+
+.canvas-controls {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(45, 45, 48, 0.95);
+    border: 1px solid #3e3e42;
+    border-radius: 6px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+}
+
+/* ========================================
+   Status Bar
+   ======================================== */
+
+#status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #007acc;
+    color: #fff;
+    padding: 4px 16px;
+    height: 28px;
+    font-size: 12px;
+    border-top: 1px solid #005a9e;
+}
+
+.status-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.zoom-btn {
+    width: 28px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+.zoom-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* ========================================
+   Scrollbars
+   ======================================== */
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1e1e1e;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #3e3e42;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* ========================================
+   Utilities
+   ======================================== */
+
+.hidden {
+    display: none !important;
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ========================================
+   Responsive
+   ======================================== */
+
+@media (max-width: 1024px) {
+    #sidebar {
+        width: 250px;
+    }
+    
+    .object-list {
+        grid-template-columns: 1fr;
+    }
+}

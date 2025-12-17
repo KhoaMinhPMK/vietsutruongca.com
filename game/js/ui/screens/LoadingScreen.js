@@ -147,15 +147,15 @@ class LoadingScreen {
     }
 
     /**
-     * Transition to connection screen
+     * Transition to main game
      */
     transitionToGame() {
-        // Switch to connection screen
-        switchScreen(SCREENS.LOADING, SCREENS.CONNECTION);
+        // Switch to screen 1
+        switchScreen(SCREENS.LOADING, SCREENS.SCREEN1);
         
-        // Start connection screen if exists
-        if (window.connectionScreen) {
-            window.connectionScreen.start();
+        // Start screen 1 if exists
+        if (window.screen1) {
+            window.screen1.start();
         }
     }
 }

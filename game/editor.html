@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Editor - Game Lịch Sử</title>
+    <link rel="stylesheet" href="css/editor.css">
+</head>
+<body>
+    <div id="editor-container">
+        <!-- Top Toolbar -->
+        <div id="toolbar">
+            <div class="toolbar-section">
+                <h1 class="editor-title">🗺️ Map Editor</h1>
+            </div>
+            
+            <div class="toolbar-section toolbar-tools">
+                <button class="tool-btn active" data-tool="select" title="Select (V)">
+                    <span class="icon">🖱️</span> Select
+                </button>
+                <button class="tool-btn" data-tool="place" title="Place (P)">
+                    <span class="icon">➕</span> Place
+                </button>
+                <button class="tool-btn" data-tool="move" title="Move (M)">
+                    <span class="icon">✋</span> Move
+                </button>
+                <button class="tool-btn" data-tool="delete" title="Delete (D)">
+                    <span class="icon">🗑️</span> Delete
+                </button>
+                <div class="toolbar-separator"></div>
+                <button class="tool-btn" id="undo-btn" title="Undo (Ctrl+Z)">
+                    <span class="icon">↶</span>
+                </button>
+                <button class="tool-btn" id="redo-btn" title="Redo (Ctrl+Y)">
+                    <span class="icon">↷</span>
+                </button>
+            </div>
+            
+            <div class="toolbar-section toolbar-actions">
+                <button class="action-btn" id="new-btn">
+                    <span class="icon">📄</span> New
+                </button>
+                <button class="action-btn" id="load-btn">
+                    <span class="icon">📂</span> Load
+                </button>
+                <button class="action-btn primary" id="save-btn">
+                    <span class="icon">💾</span> Save
+                </button>
+                <button class="action-btn" id="export-btn">
+                    <span class="icon">📤</span> Export
+                </button>
+            </div>
+        </div>
+        
+        <!-- Main Content Area -->
+        <div id="main-content">
+            <!-- Left Sidebar -->
+            <aside id="sidebar">
+                <!-- Object Library -->
+                <section class="sidebar-panel">
+                    <h2 class="panel-title">📦 Object Library</h2>
+                    
+                    <div class="search-box">
+                        <input type="text" id="object-search" placeholder="Search objects...">
+                    </div>
+                    
+                    <div class="category-tabs" id="category-tabs">
+                        <!-- Categories will be populated by JS -->
+                    </div>
+                    
+                    <div class="object-list" id="object-list">
+                        <!-- Objects will be populated by JS -->
+                    </div>
+                </section>
+                
+                <!-- Properties Panel -->
+                <section class="sidebar-panel">
+                    <h2 class="panel-title">⚙️ Properties</h2>
+                    
+                    <div id="properties-panel">
+                        <div class="no-selection">
+                            <p>No object selected</p>
+                            <small>Click an object to edit properties</small>
+                        </div>
+                        
+                        <div class="properties-form" style="display: none;">
+                            <div class="form-group">
+                                <label>ID</label>
+                                <input type="text" id="prop-id" readonly>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Type</label>
+                                <input type="text" id="prop-type" readonly>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>X</label>
+                                    <input type="number" id="prop-x" step="1">
+                                </div>
+                                <div class="form-group">
+                                    <label>Y</label>
+                                    <input type="number" id="prop-y" step="1">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Width</label>
+                                    <input type="number" id="prop-width" step="1">
+                                </div>
+                                <div class="form-group">
+                                    <label>Height</label>
+                                    <input type="number" id="prop-height" step="1">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Z-Index</label>
+                                <div class="slider-group">
+                                    <input type="range" id="prop-zindex" min="-100" max="100" value="50">
+                                    <span id="prop-zindex-value">50</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="prop-collidable">
+                                    <span>Collidable</span>
+                                </label>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="prop-interactable">
+                                    <span>Interactable</span>
+                                </label>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Metadata (JSON)</label>
+                                <textarea id="prop-metadata" rows="4" placeholder='{"name": "House", "dialog": "..."}'></textarea>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button class="btn btn-small" id="apply-properties">Apply</button>
+                                <button class="btn btn-small btn-danger" id="delete-object">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </aside>
+            
+            <!-- Canvas Area -->
+            <main id="canvas-container">
+                <canvas id="editor-canvas"></canvas>
+                
+                <!-- Canvas Controls -->
+                <div class="canvas-controls">
+                    <div class="control-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="toggle-grid" checked>
+                            <span>Grid</span>
+                        </label>
+                    </div>
+                    <div class="control-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="toggle-snap" checked>
+                            <span>Snap</span>
+                        </label>
+                    </div>
+                    <div class="control-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="toggle-debug">
+                            <span>Debug</span>
+                        </label>
+                    </div>
+                </div>
+            </main>
+        </div>
+        
+        <!-- Bottom Status Bar -->
+        <footer id="status-bar">
+            <div class="status-section">
+                <span id="status-message">Ready</span>
+            </div>
+            <div class="status-section">
+                <span id="cursor-pos">X: 0, Y: 0</span>
+            </div>
+            <div class="status-section">
+                <span id="object-count">Objects: 0</span>
+            </div>
+            <div class="status-section">
+                <span id="selected-count">Selected: 0</span>
+            </div>
+            <div class="status-section">
+                <span id="zoom-level">Zoom: 100%</span>
+            </div>
+            <div class="status-section">
+                <button class="zoom-btn" id="zoom-out">-</button>
+                <button class="zoom-btn" id="zoom-reset">100%</button>
+                <button class="zoom-btn" id="zoom-in">+</button>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- File Input (hidden) -->
+    <input type="file" id="file-input" accept=".json" style="display: none;">
+    
+    <!-- Scripts - Load in order -->
+    <!-- Constants & Utils -->
+    <script src="js/utils/constants.js"></script>
+    <script src="js/utils/objectTypes.js"></script>
+    
+    <!-- Game Core (shared with game) -->
+    <script src="js/game/Tileset.js"></script>
+    <script src="js/game/Map.js"></script>
+    <script src="js/game/entities/GameObject.js"></script>
+    <script src="js/game/entities/NPC.js"></script>
+    <script src="js/game/managers/GameObjectManager.js"></script>
+    <script src="js/game/rendering/LayeredRenderer.js"></script>
+    <script src="js/game/collision/CollisionDetector.js"></script>
+    <script src="js/game/Camera.js"></script>
+    
+    <!-- Editor Utils (will be created) -->
+    <script src="js/editor/utils/EditorConfig.js"></script>
+    <script src="js/editor/utils/GridHelper.js"></script>
+    <script src="js/editor/utils/FileManager.js"></script>
+    
+    <!-- Editor Core (will be created) -->
+    <script src="js/editor/core/EditorState.js"></script>
+    <script src="js/editor/core/EditorInput.js"></script>
+    <script src="js/editor/core/EditorCanvas.js"></script>
+    
+    <!-- Editor UI (will be created) -->
+    <script src="js/editor/ui/ObjectLibrary.js"></script>
+    <script src="js/editor/ui/PropertiesPanel.js"></script>
+    <script src="js/editor/ui/ToolBar.js"></script>
+    <script src="js/editor/ui/StatusBar.js"></script>
+    
+    <!-- Editor Tools (will be created) -->
+    <script src="js/editor/tools/SelectTool.js"></script>
+    <script src="js/editor/tools/PlaceTool.js"></script>
+    <script src="js/editor/tools/MoveTool.js"></script>
+    <script src="js/editor/tools/DeleteTool.js"></script>
+    
+    <!-- Main App (will be created) -->
+    <script src="js/editor/core/EditorApp.js"></script>
+    
+    <!-- Initialize -->
+    <script>
+        // Initialize editor when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            window.editor = new EditorApp();
+            window.editor.init();
+        });
+    </script>
+</body>
+</html>

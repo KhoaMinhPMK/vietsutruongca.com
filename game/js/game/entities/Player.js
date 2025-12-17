@@ -93,13 +93,14 @@ class Player {
     }
     
     /**
-     * Move player
+     * Move player - Set animation based on direction (does NOT update position)
      * @param {number} dx - Delta X
      * @param {number} dy - Delta Y
      */
     move(dx, dy) {
-        this.velocityX = dx;
-        this.velocityY = dy;
+        // Don't set velocity here - position is managed externally with collision
+        // this.velocityX = dx;
+        // this.velocityY = dy;
         
         // Switch animation based on movement direction
         if (dx !== 0 || dy !== 0) {

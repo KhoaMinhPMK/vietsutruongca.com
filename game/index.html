@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="css/welcome.css">
     <link rel="stylesheet" href="css/intro.css">
     <link rel="stylesheet" href="css/loading.css">
-    <link rel="stylesheet" href="css/connection.css">
     <link rel="stylesheet" href="css/game.css">
 </head>
 <body>
@@ -61,27 +60,6 @@
         <audio id="loading-audio" src="assets/audio/sound.mp3" loop preload="auto"></audio>
     </div>
 
-    <!-- Connection Screen -->
-    <div id="connection-screen" class="screen">
-        <div class="connection-bg"></div>
-        <div class="network-lines">
-            <div class="network-line"></div>
-            <div class="network-line"></div>
-            <div class="network-line"></div>
-            <div class="network-line"></div>
-        </div>
-        <div class="connection-content">
-            <div class="connection-spinner">
-                <div class="spinner-ring"></div>
-                <div class="spinner-ring"></div>
-                <div class="spinner-ring"></div>
-            </div>
-            <p class="connection-message">Kết nối của bạn đang không ổn định</p>
-            <p class="connection-subtitle">Đang kiểm tra kết nối</p>
-            <div class="connection-dots">...</div>
-        </div>
-    </div>
-
     <!-- Screen 1 (Main Game) -->
     <div id="screen-1" class="screen">
         <!-- Content sẽ được thêm sau theo lệnh của bạn -->
@@ -95,17 +73,20 @@
     <!-- JavaScript -->
     <script src="js/utils/constants.js"></script>
     <script src="js/utils/helpers.js"></script>
+    <script src="js/utils/objectTypes.js"></script>
     <script src="js/utils/AssetLoader.js"></script>
     <script src="js/game/Tileset.js"></script>
     <script src="js/game/Camera.js"></script>
     <script src="js/game/Map.js"></script>
     <script src="js/game/SpriteSheet.js"></script>
     <script src="js/game/Animation.js"></script>
+    <script src="js/game/entities/GameObject.js"></script>
+    <script src="js/game/entities/NPC.js"></script>
+    <script src="js/game/managers/GameObjectManager.js"></script>
     <script src="js/game/entities/Player.js"></script>
     <script src="js/ui/screens/WelcomeScreen.js"></script>
     <script src="js/ui/screens/IntroScreen.js"></script>
     <script src="js/ui/screens/LoadingScreen.js"></script>
-    <script src="js/ui/screens/ConnectionScreen.js"></script>
     <script src="js/ui/screens/Screen1.js"></script>
     <script src="js/main.js"></script>
 </body>

@@ -10,7 +10,6 @@ const SCREENS = {
     WELCOME: 'welcome-screen',
     INTRO: 'intro-screen',
     LOADING: 'loading-screen',
-    CONNECTION: 'connection-screen',
     SCREEN1: 'screen-1',
     GAME: 'game-container',
 };
@@ -57,6 +56,35 @@ const PLAYER_CONFIG = {
     RUN_FRONT_OFFSET_Y: 66,                    // Offset Y
     
     SPEED: 3,                                   // Movement speed in pixels
+};
+
+// GameObject Configuration
+const OBJECT_CONFIG = {
+    DEFAULT_ZINDEX: 50,                         // Default z-index for objects
+    PLAYER_ZINDEX: 50,                          // Player z-index
+    SNAP_SIZE: 16,                              // Grid snap size in pixels
+    INTERACTION_RANGE: 32,                      // Interaction distance in pixels
+    DEBUG_MODE: false,                          // Show collision boxes and debug info
+    
+    // Z-Index layers
+    LAYERS: {
+        GROUND: -100,                           // Ground tiles
+        GROUND_DECORATION: 0,                   // Ground decorations
+        WATER: 30,                              // Water features
+        OBJECTS_BACK: 40,                       // Objects behind player
+        PLAYER: 50,                             // Player layer
+        OBJECTS_MID: 55,                        // Mid-height objects (trees)
+        OBJECTS_FRONT: 60,                      // Tall objects (houses)
+        EFFECTS: 100,                           // Visual effects
+        UI: 1000                                // UI elements
+    },
+    
+    // Collision settings
+    COLLISION: {
+        ENABLED: true,                          // Enable collision detection
+        CELL_SIZE: 64,                          // Spatial grid cell size
+        PUSH_OUT: true                          // Push player out of obstacles
+    }
 };
 
 // Assets to load
