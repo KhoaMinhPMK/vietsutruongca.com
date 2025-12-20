@@ -576,12 +576,12 @@ class Screen1 {
                 width: 31,
                 height: 48,
                 dialogs: [
-                    { speaker: 'player', text: 'Xin chào, ta phải làm gì đây?' },
-                    { speaker: 'caolo', text: 'Xin chào! Ta là Cao Lỗ, người canh giữ khu vực này.' },
-                    { speaker: 'caolo', text: 'Tình hình đang rất nguy cấp! Ngươi cần thu thập tài nguyên.' },
-                    { speaker: 'caolo', text: 'Hãy chặt cây để lấy gỗ. Khi có đủ 2 cây gỗ...' },
-                    { speaker: 'caolo', text: 'Hãy tìm Cổng Thời Gian gần đây để qua màn tiếp theo!' },
-                    { speaker: 'player', text: 'Ta hiểu rồi. 2 cây gỗ và tìm cổng!' }
+                    { speaker: 'thucphan', text: 'Quân Tần mạnh, nhưng chúng ta không dễ bị khuất phục. Ta sẽ không đối đầu trực diện với chúng, mà phải tìm cách để khiến chúng tiến không được mà lùi cũng không xong! Các khanh có kế sách nào để làm suy yếu địch mà giảm tối thiểu xương máu quân dân ta không?' },
+                    { speaker: 'caolo', text: 'Muôn tâu, dù quân Tần đã có ba năm chinh chiến ở đất Bách Việt, nhưng vẫn không đủ để quân chúng đối phó với xứ ta. Địa thế của ta không chỉ là tường thành, mà còn là một cái bẫy. Chúng không chỉ đối mặt với núi non hiểm trở, mà còn phải chống chọi với khí hậu khắc nghiệt. Ở đây, ngày thì nóng như thiêu, đêm lại lạnh buốt sẽ bào mòn sức lực của chúng từng ngày.' },
+                    { speaker: 'thucphan', text: 'Đúng vậy! Để tránh thế mạnh lúc đầu của quân Tần, người Việt ta sẽ đều vào rừng, ở với cầm thú, không ai chịu để cho quân Tần bắt.' },
+                    { speaker: 'thucphan', text: 'Làm vậy, quân giặc không cướp bóc được lương thực, cũng không nắm được dân, buộc chúng rơi vào nghiệt cảnh đóng quân ở đất vô dụng, tiến không được, thoái cũng không xong.' },
+                    { speaker: 'thucphan', text: 'Tướng quân, ta giao cho ngươi trọng trách hãy mau chóng di tản dân cư' },
+                    { speaker: 'player', text: 'Thần nhận lệnh' }
                 ]
             });
             

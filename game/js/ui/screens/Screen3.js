@@ -35,6 +35,13 @@ class Screen3 {
         this.runBackSpriteSheet = null;
         this.runFrontSpriteSheet = null;
         this.enemySpriteSheet = null;
+        this.attackSpriteSheet = null;
+        
+        // Attack system
+        this.isAttacking = false;
+        this.attackCooldown = 0;
+        this.attackRange = 100; // Attack range in pixels
+        this.explosions = [];
         
         // Enemy system
         this.enemies = [];
@@ -129,16 +136,26 @@ class Screen3 {
                 'assets/sprites/Run kiếm phải.png',
                 30, 50, 8, 6, 0
             );
+            
+            // Load attack sprite
+            this.attackSpriteSheet = new SpriteSheet(
+                'assets/sprites/main2.png',
+                43.5, 86, 5, 25, 4
+            );
+            this.attackSpriteSheet.frameTime = 124;
+            this.attackSpriteSheet.loop = false;
 
             await Promise.all([
                 this.idleSpriteSheet.load(),
                 this.runSpriteSheet.load(),
                 this.runBackSpriteSheet.load(),
                 this.runFrontSpriteSheet.load(),
-                this.enemySpriteSheet.load()
+                this.enemySpriteSheet.load(),
+                this.attackSpriteSheet.load()
             ]);
             console.log('👤 Player sprites loaded');
             console.log('⚔️ Enemy sprite loaded');
+            console.log('💥 Attack sprite loaded');
 
             // Create player at center
             const centerX = (MAP_CONFIG.MAP_WIDTH * MAP_CONFIG.TILE_SIZE) / 2;
@@ -182,6 +199,9 @@ class Screen3 {
             await this.loadMapObjects();
             console.log('🌳 Loaded trees from map_data.json');
 
+            // Setup attack button
+            this.setupAttackButton();
+            
             this.isLoaded = true;
             console.log('✅ Screen3 loaded successfully!');
             
@@ -259,6 +279,143 @@ class Screen3 {
                 1, // scale (reduced from 2 to 1)
                 flipX
             );
+        });
+    }
+
+    setupAttackButton() {
+        // Create attack button (HTML)
+        const attackBtn = document.createElement('button');
+        attackBtn.id = 'attack-button-s3';
+        attackBtn.innerHTML = '⚔️';
+        attackBtn.style.cssText = `
+            position: fixed;
+            bottom: 120px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff4444, #cc0000);
+            border: 3px solid #fff;
+            color: #fff;
+            font-size: 32px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            display: block;
+        `;
+        
+        // Touch event for mobile
+        attackBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            this.handleAttack();
+        });
+        
+        // Click event for desktop
+        attackBtn.addEventListener('click', () => {
+            this.handleAttack();
+        });
+        
+        document.body.appendChild(attackBtn);
+        this.attackButton = attackBtn;
+        console.log('⚔️ Attack button created');
+    }
+    
+    handleAttack() {
+        if (this.isAttacking || this.attackCooldown > 0) return;
+        
+        this.isAttacking = true;
+        this.attackCooldown = 1000; // 1 second cooldown
+        
+        // Play attack animation on player
+        if (this.player && this.attackSpriteSheet) {
+            this.player.playAttackAnimation(this.attackSpriteSheet);
+        }
+        
+        // Check for enemies in range
+        this.checkAttackCollision();
+        
+        // Reset attack state after animation
+        setTimeout(() => {
+            this.isAttacking = false;
+        }, 124 * 5); // 5 frames * 124ms
+    }
+    
+    checkAttackCollision() {
+        if (!this.player) return;
+        
+        const playerCenter = this.player.getCenter();
+        
+        for (let i = this.enemies.length - 1; i >= 0; i--) {
+            const enemy = this.enemies[i];
+            
+            // Calculate distance
+            const dx = enemy.x - playerCenter.x;
+            const dy = enemy.y - playerCenter.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            // If in range, destroy enemy
+            if (distance <= this.attackRange) {
+                // Create explosion
+                this.createExplosion(enemy.x, enemy.y);
+                
+                // Remove enemy
+                this.enemies.splice(i, 1);
+                console.log('💥 Enemy destroyed!');
+            }
+        }
+    }
+    
+    createExplosion(x, y) {
+        this.explosions.push({
+            x: x,
+            y: y,
+            radius: 0,
+            maxRadius: 40,
+            duration: 300,
+            elapsed: 0
+        });
+    }
+    
+    updateExplosions(deltaTime) {
+        for (let i = this.explosions.length - 1; i >= 0; i--) {
+            const explosion = this.explosions[i];
+            explosion.elapsed += deltaTime;
+            
+            // Expand explosion
+            const progress = explosion.elapsed / explosion.duration;
+            explosion.radius = explosion.maxRadius * progress;
+            
+            // Remove if finished
+            if (explosion.elapsed >= explosion.duration) {
+                this.explosions.splice(i, 1);
+            }
+        }
+    }
+    
+    renderExplosions() {
+        if (!this.camera) return;
+        
+        this.explosions.forEach(explosion => {
+            const screenPos = this.camera.worldToScreen(explosion.x, explosion.y);
+            
+            // Draw expanding circle
+            const alpha = 1 - (explosion.elapsed / explosion.duration);
+            this.ctx.save();
+            this.ctx.globalAlpha = alpha;
+            
+            // Orange outer circle
+            this.ctx.beginPath();
+            this.ctx.arc(screenPos.x, screenPos.y, explosion.radius, 0, Math.PI * 2);
+            this.ctx.fillStyle = '#ff8800';
+            this.ctx.fill();
+            
+            // Yellow inner circle
+            this.ctx.beginPath();
+            this.ctx.arc(screenPos.x, screenPos.y, explosion.radius * 0.6, 0, Math.PI * 2);
+            this.ctx.fillStyle = '#ffff00';
+            this.ctx.fill();
+            
+            this.ctx.restore();
         });
     }
 
@@ -402,6 +559,14 @@ class Screen3 {
         // Update enemies
         this.updateEnemies(deltaTime);
         
+        // Update explosions
+        this.updateExplosions(deltaTime);
+        
+        // Update attack cooldown
+        if (this.attackCooldown > 0) {
+            this.attackCooldown -= deltaTime;
+        }
+        
         // Spawn enemies
         this.enemySpawnTimer += deltaTime;
         if (this.enemySpawnTimer >= this.enemySpawnInterval) {
@@ -484,6 +649,9 @@ class Screen3 {
         
         // Render enemies
         this.renderEnemies();
+        
+        // Render explosions
+        this.renderExplosions();
 
         // Render player
         this.player.render(this.ctx, this.camera);
@@ -613,6 +781,11 @@ class Screen3 {
         // Stop animation loop
         if (this.animationId) {
             cancelAnimationFrame(this.animationId);
+        }
+        
+        // Remove attack button
+        if (this.attackButton) {
+            this.attackButton.remove();
         }
         
         // Remove input handlers
