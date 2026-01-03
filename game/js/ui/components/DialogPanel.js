@@ -8,6 +8,7 @@ class DialogPanel {
         this.currentIndex = 0;
         this.dialogs = [];
         this.npcName = '';
+        this.onClose = null; // Callback khi đóng dialog
         
         // Load portraits
         this.portraits = {
@@ -21,11 +22,11 @@ class DialogPanel {
         this.portraits.player.onload = () => console.log('✅ Player portrait loaded');
         this.portraits.caolo.onload = () => console.log('✅ Cao Lỗ portrait loaded');
         
-        // Panel settings
-        this.panelWidth = 500;
-        this.panelHeight = 85;
-        this.portraitSize = 60;
-        this.portraitOffset = 12; // Nhô ra khỏi panel
+        // Panel settings (larger to fit long dialogues)
+        this.panelWidth = 720;
+        this.panelHeight = 140;
+        this.portraitSize = 72;
+        this.portraitOffset = 16; // Nhô ra khỏi panel
         
         // Button bounds for click detection
         this.nextButtonBounds = null;
@@ -52,6 +53,13 @@ class DialogPanel {
         this.currentIndex = 0;
         this.dialogs = [];
         console.log('💬 Dialog closed');
+        
+        // Trigger callback if set
+        if (this.onClose) {
+            console.log('💬 Triggering onClose callback');
+            this.onClose();
+            this.onClose = null; // Reset callback
+        }
     }
     
     /**
@@ -127,19 +135,19 @@ class DialogPanel {
         this.drawCornerDecoration(ctx, panelX + this.panelWidth, panelY + this.panelHeight, 12, 'bottom-right');
         
         // === PORTRAIT (Nhô ra khỏi panel) ===
-        const portraitX = panelX + 20;
+        const portraitX = panelX + 22;
         const portraitY = panelY - this.portraitOffset;
         
         this.renderPortrait(ctx, portraitX, portraitY, dialog.speaker);
         
         // === TEXT AREA ===
-        const textX = portraitX + this.portraitSize + 20;
-        const textY = panelY + 15;
-        const textWidth = this.panelWidth - (this.portraitSize + 60);
+        const textX = portraitX + this.portraitSize + 26;
+        const textY = panelY + 18;
+        const textWidth = this.panelWidth - (this.portraitSize + 90);
         
         // Speaker name
         ctx.fillStyle = '#ffd700';
-        ctx.font = 'bold 16px Georgia, serif';
+        ctx.font = 'bold 18px Georgia, serif';
         ctx.textAlign = 'left';
         ctx.textBaseline = 'top';
         const speakerName = dialog.speaker === 'player' ? 'Người chơi' : this.npcName;
@@ -147,16 +155,19 @@ class DialogPanel {
         
         // Dialog text with word wrap
         ctx.fillStyle = '#f5f5dc';
-        ctx.font = '14px Georgia, serif';
-        this.drawWrappedText(ctx, dialog.text, textX, textY + 22, textWidth, 18);
+        ctx.font = '16px Georgia, serif';
+        this.drawWrappedText(ctx, dialog.text, textX, textY + 26, textWidth, 20);
         
         // === NEXT/CLOSE BUTTON ===
         const isLastDialog = this.currentIndex === this.dialogs.length - 1;
         const buttonText = isLastDialog ? 'Đóng ✕' : 'Tiếp ➜';
-        const buttonWidth = 80;
-        const buttonHeight = 28;
-        const buttonX = panelX + this.panelWidth - buttonWidth - 15;
-        const buttonY = panelY + this.panelHeight - buttonHeight - 10;
+        const buttonWidth = 96;
+        const buttonHeight = 34;
+        const buttonX = panelX + this.panelWidth - buttonWidth - 18;
+        const buttonY = panelY + this.panelHeight - buttonHeight - 14;
+        
+        // Save bounds for click detection
+        this.nextButtonBounds = { x: buttonX, y: buttonY, width: buttonWidth, height: buttonHeight };
         
         // Button background
         const btnGradient = ctx.createLinearGradient(buttonX, buttonY, buttonX, buttonY + buttonHeight);
@@ -172,7 +183,7 @@ class DialogPanel {
         
         // Button text
         ctx.fillStyle = '#1a0f08';
-        ctx.font = 'bold 14px Arial';
+        ctx.font = 'bold 15px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(buttonText, buttonX + buttonWidth / 2, buttonY + buttonHeight / 2);
@@ -307,6 +318,25 @@ class DialogPanel {
         ctx.fill();
     }
     
+    /**
+     * Handle click event
+     * @param {number} x - Mouse X
+     * @param {number} y - Mouse Y
+     */
+    handleClick(x, y) {
+        if (!this.visible) return;
+        
+        // Check if clicked on next button
+        if (this.isClickOnNextButton(x, y)) {
+            this.next();
+            return;
+        }
+        
+        // Also advance if clicked anywhere on panel (optional, but good UX)
+        // For now, let's stick to button or maybe just next()
+        // this.next(); 
+    }
+
     /**
      * Check if click is on next button
      */

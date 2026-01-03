@@ -207,6 +207,13 @@ class Screen1 {
             if (document.fullscreenElement) {
                 btn.style.opacity = '0.3'; // Fade out when fullscreen
                 btn.innerHTML = '✕'; // X icon to exit
+                
+                // Ensure joystick is still visible in fullscreen
+                const joystickContainer = document.getElementById('joystick-container');
+                if (joystickContainer) {
+                    joystickContainer.style.position = 'fixed';
+                    joystickContainer.style.zIndex = '10000';
+                }
             } else {
                 btn.style.opacity = '1';
                 btn.innerHTML = '⛶'; // Fullscreen icon

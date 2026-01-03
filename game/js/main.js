@@ -4,6 +4,7 @@ let introScreen;
 let loadingScreen;
 let screen1;
 let screen2;
+let intermissionScreen;
 let screen3;
 let game;
 
@@ -31,14 +32,40 @@ window.addEventListener('DOMContentLoaded', () => {
     screen2 = new Screen2();
     window.screen2 = screen2;
     
+    // Create intermission screen (map selection)
+    intermissionScreen = new IntermissionScreen();
+    window.intermissionScreen = intermissionScreen;
+    
     // Create screen 3 (but don't start yet)
     screen3 = new Screen3();
     window.screen3 = screen3;
     
+    // Create game object for global access
+    game = {
+        screen1,
+        screen2,
+        intermissionScreen,
+        screen3
+    };
+    window.game = game;
+    
     console.log('All screens initialized');
     
+    // Debug: Test command để jump vào IntermissionScreen
+    window.testIntermission = () => {
+        console.log('🧪 Testing IntermissionScreen...');
+        // Hide all screens
+        document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+        // Load and show intermission
+        intermissionScreen.load().then(() => {
+            intermissionScreen.show();
+        });
+    };
+    
+    console.log('%c💡 Debug command: testIntermission()', 'color: #00ff00; font-weight: bold');
+    
     // Welcome screen is already visible
-    // Flow: Welcome -> Intro -> Loading -> Screen1 (Map)
+    // Flow: Welcome -> Intro -> Loading -> Screen1 (Map) -> Screen2 (Wood) -> IntermissionScreen -> Screen3 (Combat)
 });
 
 // Optional: Allow skipping intro with Space key (only during intro)

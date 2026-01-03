@@ -466,13 +466,17 @@ class Screen2 {
                     // Check mission complete
                     if (this.killCount >= this.requiredKills) {
                         this.missionComplete = true;
-                        console.log('🎉 Mission Complete! Switching to Screen3...');
+                        console.log('🎉 Mission Complete! Switching to IntermissionScreen...');
                         
-                        // Stop Screen2 and switch to Screen3
+                        // Stop Screen2 and switch to IntermissionScreen
                         setTimeout(() => {
                             this.stopGame();
-                            if (window.screen3) {
-                                window.screen3.start();
+                            console.log('🔄 Checking intermissionScreen:', window.intermissionScreen);
+                            if (window.intermissionScreen) {
+                                console.log('✅ IntermissionScreen found, starting...');
+                                window.intermissionScreen.start();
+                            } else {
+                                console.error('❌ IntermissionScreen not found in window!');
                             }
                         }, 1500);
                     }

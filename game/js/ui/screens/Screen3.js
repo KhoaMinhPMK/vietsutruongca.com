@@ -56,24 +56,39 @@ class Screen3 {
         console.log('🎮 Screen3 starting...');
         
         // Hide other screens
-        const screens = ['welcome-screen', 'intro-screen', 'loading-screen'];
-        screens.forEach(id => {
-            const screen = document.getElementById(id);
-            if (screen) {
-                screen.classList.remove('active');
-                screen.style.display = 'none';
-            }
+        document.querySelectorAll('.screen').forEach(s => {
+            if (s.id !== 'screen-3') s.style.display = 'none';
         });
         
-        // Show and setup canvas
-        const canvas = document.getElementById('game-canvas');
-        const canvasContainer = document.getElementById('canvas-container');
+        // Show screen-3
+        const screen3 = document.getElementById('screen-3');
+        if (screen3) screen3.style.display = 'block';
         
-        if (canvasContainer) canvasContainer.style.display = 'block';
+        // Setup canvas
+        const canvas = document.getElementById('screen3-canvas');
         if (canvas) {
+            // Make canvas responsive
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            } else {
+                canvas.width = MAP_CONFIG.CANVAS_WIDTH || 1024;
+                canvas.height = MAP_CONFIG.CANVAS_HEIGHT || 640;
+            }
+            
             canvas.style.display = 'block';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.touchAction = 'none';
+            
             this.canvas = canvas;
             this.ctx = canvas.getContext('2d');
+            console.log('✅ Screen3 canvas setup:', canvas.width, 'x', canvas.height);
+        } else {
+            console.error('❌ screen3-canvas not found!');
+            return;
         }
         
         // Load Screen3
@@ -327,8 +342,8 @@ class Screen3 {
         this.attackCooldown = 1000; // 1 second cooldown
         
         // Play attack animation on player
-        if (this.player && this.attackSpriteSheet) {
-            this.player.playAttackAnimation(this.attackSpriteSheet);
+        if (this.player) {
+            this.player.attack();
         }
         
         // Check for enemies in range
