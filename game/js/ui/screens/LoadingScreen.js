@@ -153,12 +153,12 @@ class LoadingScreen {
         // Try to enter fullscreen automatically
         this.tryAutoFullscreen();
         
-        // Switch to screen 1
-        switchScreen(SCREENS.LOADING, SCREENS.SCREEN1);
+        // Switch to video screen (plays 1.mp4 before Screen1)
+        switchScreen(SCREENS.LOADING, SCREENS.VIDEO);
         
-        // Start screen 1 if exists
-        if (window.screen1) {
-            window.screen1.start();
+        // Start video screen if exists
+        if (window.videoScreen) {
+            window.videoScreen.start();
         }
     }
     

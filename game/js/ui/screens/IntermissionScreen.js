@@ -384,7 +384,10 @@ class IntermissionScreen {
         console.log('🎮 Going to Screen3 with level:', level.name);
         this.cleanup();
         
-        if (window.game && window.game.screen3) {
+        // Play video 2.mp4 before Screen3
+        if (window.videoScreen2) {
+            window.videoScreen2.start();
+        } else if (window.game && window.game.screen3) {
             window.game.screen3.start();
         } else {
             console.error('❌ Screen3 not found in window.game!');

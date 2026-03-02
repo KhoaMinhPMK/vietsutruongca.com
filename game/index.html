@@ -66,6 +66,14 @@
         <audio id="loading-audio" src="assets/audio/sound.mp3" loop preload="auto"></audio>
     </div>
 
+    <!-- Video Screen (Story Video after Loading) -->
+    <div id="video-screen" class="screen">
+        <video id="story-video" class="story-video" playsinline>
+            <source src="assets/videos/1.mp4" type="video/mp4">
+        </video>
+        <button id="skip-video-btn" class="skip-video-btn">Bỏ qua ▶▶</button>
+    </div>
+
     <!-- Screen 1 (Main Game) -->
     <div id="screen-1" class="screen">
         <!-- Content sẽ được thêm sau theo lệnh của bạn -->
@@ -81,6 +89,14 @@
         <canvas id="intermission-canvas"></canvas>
     </div>
     
+    <!-- Video Screen 2 (Story Video before Screen3) -->
+    <div id="video-screen-2" class="screen">
+        <video id="story-video-2" class="story-video" playsinline>
+            <source src="assets/videos/2.mp4" type="video/mp4">
+        </video>
+        <button id="skip-video-btn-2" class="skip-video-btn">Bỏ qua ▶▶</button>
+    </div>
+
     <!-- Screen 3 (Combat) -->
     <div id="screen-3" class="screen">
         <canvas id="screen3-canvas"></canvas>
@@ -116,9 +132,11 @@
     <script src="js/ui/screens/WelcomeScreen.js"></script>
     <script src="js/ui/screens/IntroScreen.js"></script>
     <script src="js/ui/screens/LoadingScreen.js"></script>
+    <script src="js/ui/screens/VideoScreen.js"></script>
     <script src="js/ui/screens/Screen1.js"></script>
     <script src="js/ui/screens/Screen2.js"></script>
     <script src="js/ui/screens/IntermissionScreen.js"></script>
+    <script src="js/ui/screens/VideoScreen2.js"></script>
     <script src="js/ui/screens/Screen3.js"></script>
     <script src="js/main.js"></script>
 </body>
