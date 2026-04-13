@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/hero-section.css">
     <link rel="stylesheet" href="css/game-sections.css">
     <link rel="stylesheet" href="css/character-slide.css">
+    <link rel="stylesheet" href="css/video-slider.css">
     <link rel="stylesheet" href="css/animations.css">
 
     <!-- External Libraries -->
@@ -437,6 +438,88 @@
         </div>
     </section>
 
+    <!-- Video Gallery Section -->
+    <section id="videos" class="video-gallery-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Video</h2>
+                <p class="section-subtitle">Vuốt hoặc bấm để chuyển giữa các video nhúng</p>
+            </div>
+
+            <div class="video-gallery-shell">
+                <div class="video-gallery-slider">
+                    <div class="video-gallery-track">
+                        <article class="video-gallery-slide">
+                            <div class="video-gallery-frame">
+                                <iframe
+                                    src="https://www.youtube.com/embed/oOYawT_ImyU?rel=0&modestbranding=1&playsinline=1"
+                                    title="Video giới thiệu 1"
+                                    loading="eager"
+                                    referrerpolicy="strict-origin-when-cross-origin"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen></iframe>
+                            </div>
+                        </article>
+
+                        <article class="video-gallery-slide">
+                            <div class="video-gallery-frame">
+                                <iframe
+                                    data-embed-src="https://www.youtube.com/embed/FjE-677eN8s?rel=0&modestbranding=1&playsinline=1"
+                                    title="Video giới thiệu 2"
+                                    loading="lazy"
+                                    referrerpolicy="strict-origin-when-cross-origin"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen></iframe>
+                            </div>
+                        </article>
+
+                        <article class="video-gallery-slide">
+                            <div class="video-gallery-frame">
+                                <iframe
+                                    data-embed-src="https://www.youtube.com/embed/9dyfeCtMq6E?rel=0&modestbranding=1&playsinline=1"
+                                    title="Video giới thiệu 3"
+                                    loading="lazy"
+                                    referrerpolicy="strict-origin-when-cross-origin"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen></iframe>
+                            </div>
+                        </article>
+
+                        <article class="video-gallery-slide">
+                            <div class="video-gallery-frame">
+                                <iframe
+                                    data-embed-src="https://www.youtube.com/embed/YaLow63xgpk?rel=0&modestbranding=1&playsinline=1"
+                                    title="Video giới thiệu 4"
+                                    loading="lazy"
+                                    referrerpolicy="strict-origin-when-cross-origin"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen></iframe>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+                <button class="video-gallery-nav video-gallery-nav-prev" type="button" aria-label="Video trước">&#8249;</button>
+                <button class="video-gallery-nav video-gallery-nav-next" type="button" aria-label="Video tiếp theo">&#8250;</button>
+
+                <div class="video-gallery-footer">
+                    <div class="video-gallery-progress" aria-live="polite">
+                        <span class="video-gallery-current">01</span>
+                        <span class="video-gallery-separator">/</span>
+                        <span class="video-gallery-total">04</span>
+                    </div>
+
+                    <div class="video-gallery-indicators" role="group" aria-label="Chọn video">
+                        <button class="video-gallery-indicator active" type="button" data-slide="0" aria-label="Chuyển đến video 1" aria-pressed="true"></button>
+                        <button class="video-gallery-indicator" type="button" data-slide="1" aria-label="Chuyển đến video 2" aria-pressed="false"></button>
+                        <button class="video-gallery-indicator" type="button" data-slide="2" aria-label="Chuyển đến video 3" aria-pressed="false"></button>
+                        <button class="video-gallery-indicator" type="button" data-slide="3" aria-label="Chuyển đến video 4" aria-pressed="false"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Download Section -->
     <section id="download" class="download-section">
         <div class="container">
@@ -492,6 +575,7 @@
     <script src="js/navigation-enhancer.js"></script>
     <script src="js/header-effects.js"></script>
     <script src="js/character-slide.js"></script>
+    <script src="js/video-slider.js"></script>
     <script src="js/main.js"></script>
 </body>
 
